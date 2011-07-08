@@ -5,3 +5,14 @@ Author : Yoann Sculo
 SHOUTcast Recorder is able to record and store SHOUTcast stream automatically
 into mp3 format with ID3Tags.
 
+How does it work ?
+==================
+
+- Curl receives HTTP blocks
+- For each block received, we parse every bytes
+- For each byte, we look for :
+   - ICY header
+   - potential metadata blocks
+   - mp3data we store in memory
+- At the end of each block, we write gathered MP3 data into an external file
+- Now we can enjoy downloaded music :)
