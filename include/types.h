@@ -16,9 +16,11 @@ typedef enum {
 typedef struct
 {
     char icy_name[500];
+    char icy_notice1[500];
+    char icy_notice2[500];
     char icy_genre[255];
     char icy_pub[255];
-    char icy_br[255];
+    char icy_br[255]; // bitrate
     
     char *ptr;            // Pointer used to parse header buffer
     char *buffer;         // Dynamic buffer with the whole http header.

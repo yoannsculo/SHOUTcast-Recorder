@@ -12,6 +12,8 @@ int load_stream(Stream *stream, const char *url) {
     
     // Setting header
     header->icy_name[0]  = '\0';
+    header->icy_notice1[0]  = '\0';
+    header->icy_notice2[0]  = '\0';
     header->icy_genre[0] = '\0';
     header->icy_pub[0]   = '\0';
     header->icy_br[0]    = '\0';
@@ -43,6 +45,8 @@ int load_stream(Stream *stream, const char *url) {
 int extract_header_fields(ICYHeader *header) {
     char metaint[20];
     get_http_header_field(header->buffer, "icy-name", header->icy_name);
+    get_http_header_field(header->buffer, "icy-notice1", header->icy_notice1);
+    get_http_header_field(header->buffer, "icy-notice2", header->icy_notice2);
     get_http_header_field(header->buffer, "icy-genre", header->icy_genre);
     get_http_header_field(header->buffer, "icy-pub", header->icy_pub);
     get_http_header_field(header->buffer, "icy-br", header->icy_br);
@@ -235,20 +239,20 @@ int mp3data_listener(Stream *stream, char *buffer) {
     return 0;
 }
 
-int write_data(Stream *stream, size_t *size)
-{
-    int written;
-    written = fwrite(stream->mp3data.buffer, *size,
-                     stream->mp3data.size,
-                     (FILE *)stream->output_stream);
+int write_data(Stream *stream, size_t *size) {
+    int written = fwrite(stream->mp3data.buffer, *size,
+                         stream->mp3data.size,
+                         (FILE *)stream->output_stream);
     return written;
 }
-int print_header(ICYHeader *header)
-{
-    printf("name\t: %s\n",  header->icy_name);
+
+int print_header(ICYHeader *header) {
+    printf("name\t: %s\n", header->icy_name);
+    printf("icy-notice1\t: %s\n", header->icy_notice1);
+    printf("icy-notice2\t: %s\n", header->icy_notice2);
     printf("genre\t: %s\n", header->icy_genre);
-    printf("pub\t: %s\n",   header->icy_pub);
-    printf("br\t: %s\n",   header->icy_br);
-    printf("metaint\t: %d\n",   header->metaint);
+    printf("pub\t: %s\n", header->icy_pub);
+    printf("br\t: %s\n", header->icy_br);
+    printf("metaint\t: %d\n", header->metaint);
     return 0;
 }
