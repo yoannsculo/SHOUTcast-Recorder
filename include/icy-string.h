@@ -1,6 +1,8 @@
 #ifndef __ICY_STRING_H_
 #define __ICY_STRING_H_
 
+#include "types.h"
+
 int extract_header_fields(ICYHeader *header);
 int get_http_header_field(char *header, const char* field, char* value);
 int get_metadata_field(char *metadata, const char* field, char* value);
