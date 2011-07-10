@@ -6,7 +6,7 @@
 
 int read_stream(Stream *stream)
 {
-	CURL *curl;
+    CURL *curl;
     CURLcode res;
 
     if (stream->url == NULL) {
