@@ -62,18 +62,39 @@ int get_http_header_field(char *header, const char* field, char* value) {
 
     occurrence  = strstr(header, field);
     content_pos = strlen(field)+1;
-    
+    // TODO : Test NULL value 
     for (i=content_pos; occurrence[i] != '\0';i++) {
         if (is_cr_present(occurrence, i)) {
             // "<field>:" is deleted
-            strncpy(value, occurrence+content_pos, i-1);
-            value[i-content_pos] = '\0';
+            strncpy(value, occurrence+content_pos, i-content_pos);
+            value[i-content_pos-1] = '\0';
             return 0;
         }
     }
     // Value hasn't been found
     value[0] = '\0';
-    return -1;
+    return 1;
+}
+
+
+int get_metadata_field(char *metadata, const char* field, char* value) {
+    char *split;
+    char *occurrence = NULL;
+    split = strtok (metadata,";");
+    while (split != NULL) {
+        occurrence  = strstr(split, field);
+        if (occurrence != NULL) {
+            unsigned int content_pos = strlen(field)+2;
+            unsigned int content_size = strlen(split)-content_pos-1; 
+            strncpy(value, occurrence+content_pos, content_size);
+            value[content_size] = '\0';
+            return 0;
+        } 
+        split = strtok (NULL,";");
+    }
+    // Value hasn't been found
+    value[0]='\0';
+    return 1;
 }
 
 int is_cr_present(char *str, int pos) {
@@ -189,33 +210,46 @@ int metadata_listener(Stream *stream, char *buffer) {
     if (!is_metadata(stream)) {
         return 1;
     }
-    
-    MetaData *metadata = &stream->metadata;
-    
-    if (is_metadata_header(stream)) {
-        metadata->ptr = metadata->buffer; // Rewind
-        metadata->size = abs((int)*buffer) * 16;
-        
-        if (metadata->size == 0) {
-            stream->bytes_count = 0;
-            stream->status = E_STATUS_MP3DATA;
-        }
-        else {
-            stream->status = E_STATUS_METADATA_BODY;
-        }
-        return 0;
 
+    if (is_metadata_header(stream)) {
+        return metadata_header_handler(stream, buffer);
     } else if (is_metadata_body(stream)) {
-        *metadata->ptr = *buffer;
-        if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
-            strncpy(stream->stream_title, metadata->buffer, metadata->size);
-            printf("%s\n", stream->stream_title);
-            stream->bytes_count = 0;
-            stream->status = E_STATUS_MP3DATA;
-            return 0;
-        } else {
-            metadata->ptr++;
-        }
+        return metadata_body_handler(stream, buffer);
+    }
+    return 0;
+}
+
+
+int metadata_header_handler(Stream *stream, char *buffer) {
+    MetaData *metadata = &stream->metadata;
+
+    metadata->ptr = metadata->buffer; // Rewind
+    metadata->size = abs((int)*buffer) * 16;
+
+    if (metadata->size == 0) {
+        stream->bytes_count = 0;
+        stream->status = E_STATUS_MP3DATA;
+    }
+    else {
+        stream->status = E_STATUS_METADATA_BODY;
+    }
+
+    return 0;
+}
+
+
+int metadata_body_handler(Stream *stream, char *buffer) {
+    MetaData *metadata = &stream->metadata;
+    *metadata->ptr = *buffer;
+    if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
+        char metadata_content[500];
+        strncpy(metadata_content, metadata->buffer, metadata->size);
+        get_metadata_field(metadata_content, "StreamTitle", stream->stream_title);
+        printf("%s\n", stream->stream_title);
+        stream->bytes_count = 0;
+        stream->status = E_STATUS_MP3DATA;
+    } else {
+        metadata->ptr++;
     }
     return 0;
 }
@@ -247,12 +281,14 @@ int write_data(Stream *stream, size_t *size) {
 }
 
 int print_header(ICYHeader *header) {
-    printf("name\t: %s\n", header->icy_name);
+    printf("##################################\n");
+    printf("Name\t: %s\n", header->icy_name);
     printf("icy-notice1\t: %s\n", header->icy_notice1);
     printf("icy-notice2\t: %s\n", header->icy_notice2);
-    printf("genre\t: %s\n", header->icy_genre);
-    printf("pub\t: %s\n", header->icy_pub);
-    printf("br\t: %s\n", header->icy_br);
+    printf("Genre\t: %s\n", header->icy_genre);
+    //printf("Public\t: %s\n", (header->icy_pub?"yes":"no"));
+    printf("Bitrate : %s kbit/s\n", header->icy_br);
     printf("metaint\t: %d\n", header->metaint);
+    printf("##################################\n");
     return 0;
 }
