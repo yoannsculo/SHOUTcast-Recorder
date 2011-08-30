@@ -12,29 +12,32 @@
 #include "shoutcast.h"
 #include "curl.h"
 
-int main(int argc, char** argv)
+int load_stream_from_playlist(char *filename);
+
+// int main(int argc, char** argv)
+int main()
 {
   	FILE *fichiersortie;
-    int res = 0;  	
-  	fichiersortie = fopen("toto.mp3","w"); 
+  	
+    fichiersortie = fopen("toto.mp3","w"); 
 
-    Stream stream;
+    // TODO : handler parameters
+    // TODO : add option --radio_list=<file>
+    // TODO : add option --quiet
+    // TODO : add option --ncurses
     
+    // TODO : add a big shoucast radio list with lots of radios 
+
+    // TODO : add function shoutr_start(Stream *stream)
+    // TODO : add function shoutr_stop(Stream *stream)
+ 
+    load_stream_from_playlist("radio.pls");
+
     // res = load_stream(&stream, "http://stream-hautdebit.frequence3.net:8000");
     // res = load_stream(&stream, "http://80.237.152.83:8000");
     // res = load_stream(&stream, "http://88.190.24.47:80");
-    res = load_stream(&stream, "http://88.191.122.117:5000");
-    if (res) {
-        printf("Error : Couldn't load Shoutcast stream\n");
-        return -1;
-    }
-
-    res = read_stream(&stream);
-    if (res) {
-        printf("Error : Couldn't read Shoutcast stream\n");
-        return -1;
-	}
-
+    // res = load_stream(&stream, "http://88.191.122.117:5000");
+    
     return 0;
 }
 
