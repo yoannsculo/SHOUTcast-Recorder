@@ -19,7 +19,6 @@ int metadata_listener(Stream *stream, char *buffer) {
     return 0;
 }
 
-
 int metadata_header_handler(Stream *stream, char *buffer) {
     MetaData *metadata = &stream->metadata;
 
@@ -53,8 +52,6 @@ int metadata_body_handler(Stream *stream, char *buffer) {
     }
     return 0;
 }
-
-
 
 int is_metadata(Stream *stream) {
     if (is_metadata_body(stream) || is_metadata_header(stream)) {

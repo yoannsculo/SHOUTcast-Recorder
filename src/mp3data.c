@@ -4,6 +4,8 @@
 #include "types.h"
 #include "mp3data.h"
 
+// TODO : add id3tag_file(FILE *fp, char *title);
+
 int mp3data_listener(Stream *stream, char *buffer) {
     if (!is_mp3data(stream)) {
         return 1;
