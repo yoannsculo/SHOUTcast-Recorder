@@ -1,4 +1,4 @@
-CC 	   	   = gcc
+CC		   = gcc
 BUILD_PATH = build
 EXEC 	   = $(BUILD_PATH)/shoutr
 SRC        = $(wildcard src/*.c) 
@@ -17,6 +17,7 @@ $(BUILD_PATH)/%.o: src/%.c
 
 $(EXEC): $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
+	@cp ./radios/radio.pls $(BUILD_PATH)
 
 clean:
 	rm -f $(EXEC) $(OBJ)
