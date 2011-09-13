@@ -17,7 +17,7 @@ $(BUILD_PATH)/%.o: src/%.c
 
 $(EXEC): $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
-	@cp ./radios/radio.pls $(BUILD_PATH)
+	-@(cp ./radios/radio.pls $(BUILD_PATH))
 
 clean:
-	rm -f $(EXEC) $(OBJ)
+	-@(rm -f $(EXEC) $(OBJ))
