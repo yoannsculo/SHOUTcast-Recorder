@@ -60,6 +60,7 @@ typedef struct
     unsigned int bytes_count; // Number of bytes received since last metadata block
     unsigned int bytes_count_total; // Number of bytes received since beginning
     unsigned int blocks_count; // Number of HTTP blocks received
+    unsigned int metadata_count; // Number of metadata blocks received since beginning
 } Stream;
 
 #endif // __TYPES_H_

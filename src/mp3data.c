@@ -6,7 +6,8 @@
 
 // TODO : add id3tag_file(FILE *fp, char *title);
 
-int mp3data_listener(Stream *stream, char *buffer) {
+int mp3data_listener(Stream *stream, char *buffer)
+{
     if (!is_mp3data(stream)) {
         return 1;
     }
@@ -25,7 +26,8 @@ int mp3data_listener(Stream *stream, char *buffer) {
     return 0;
 }
 
-int is_mp3data(Stream *stream) {
+int is_mp3data(Stream *stream)
+{
     if (stream->status == E_STATUS_MP3DATA) {
         return TRUE;
     } else {

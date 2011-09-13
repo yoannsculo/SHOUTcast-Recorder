@@ -8,7 +8,8 @@
 #include "pls.h"
 #include "curl.h"
 
-int load_stream(Stream *stream, const char *url) {
+int load_stream(Stream *stream, const char *url)
+{
     ICYHeader *header = &stream->header;
     MetaData *metadata = &stream->metadata;
     Mp3Data *mp3data = &stream->mp3data;
@@ -34,11 +35,12 @@ int load_stream(Stream *stream, const char *url) {
     stream->bytes_count         = 0;
     stream->bytes_count_total   = 0;
     stream->blocks_count        = 0;
+    stream->metadata_count      = 0;
     stream->stream_title[0]     = '\0';
    
     stream->status = E_STATUS_HEADER;
 
-    stream->output_stream = fopen("toto.mp3","w");
+    stream->output_stream = fopen("radio0.mp3","w");
     if (strcpy(stream->url, url) != NULL)
         return 0;
     else

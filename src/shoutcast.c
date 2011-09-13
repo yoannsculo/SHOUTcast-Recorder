@@ -9,7 +9,8 @@
 #include "mp3data.h"
 #include "icy-string.h"
 
-void global_listener(Stream *stream, char *buffer) {
+void global_listener(Stream *stream, char *buffer)
+{
     // http_code_listener(stream, buffer);
     
     if (is_header(stream)) {
@@ -23,7 +24,8 @@ void global_listener(Stream *stream, char *buffer) {
     }
 }
 
-int write_data(Stream *stream, size_t *size) {
+int write_data(Stream *stream, size_t *size)
+{
     int written = fwrite(stream->mp3data.buffer, *size,
                          stream->mp3data.size,
                          (FILE *)stream->output_stream);

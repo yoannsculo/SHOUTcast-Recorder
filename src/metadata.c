@@ -6,7 +6,8 @@
 #include "metadata.h"
 #include "icy-string.h"
 
-int metadata_listener(Stream *stream, char *buffer) {
+int metadata_listener(Stream *stream, char *buffer)
+{
     if (!is_metadata(stream)) {
         return 1;
     }
@@ -19,7 +20,8 @@ int metadata_listener(Stream *stream, char *buffer) {
     return 0;
 }
 
-int metadata_header_handler(Stream *stream, char *buffer) {
+int metadata_header_handler(Stream *stream, char *buffer)
+{
     MetaData *metadata = &stream->metadata;
 
     metadata->ptr = metadata->buffer; // Rewind
@@ -37,7 +39,8 @@ int metadata_header_handler(Stream *stream, char *buffer) {
 }
 
 
-int metadata_body_handler(Stream *stream, char *buffer) {
+int metadata_body_handler(Stream *stream, char *buffer)
+{
     MetaData *metadata = &stream->metadata;
     *metadata->ptr = *buffer;
     if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
@@ -45,6 +48,16 @@ int metadata_body_handler(Stream *stream, char *buffer) {
         strncpy(metadata_content, metadata->buffer, metadata->size);
         get_metadata_field(metadata_content, "StreamTitle", stream->stream_title);
         printf("%s\n", stream->stream_title);
+        stream->metadata_count++;
+        
+        {
+            char new_filename[255] = "";
+            fclose(stream->output_stream);
+            sprintf(new_filename, "radio%d.mp3", stream->metadata_count);
+            stream->output_stream = fopen(new_filename, "w");
+
+        }
+        
         stream->bytes_count = 0;
         stream->status = E_STATUS_MP3DATA;
     } else {
@@ -53,7 +66,8 @@ int metadata_body_handler(Stream *stream, char *buffer) {
     return 0;
 }
 
-int is_metadata(Stream *stream) {
+int is_metadata(Stream *stream)
+{
     if (is_metadata_body(stream) || is_metadata_header(stream)) {
         return TRUE;
     } else {
@@ -61,7 +75,8 @@ int is_metadata(Stream *stream) {
     }
 }
 
-int is_metadata_body(Stream *stream) {
+int is_metadata_body(Stream *stream)
+{
     if (stream->status == E_STATUS_METADATA_BODY) {
         return TRUE;
     } else {
@@ -69,7 +84,8 @@ int is_metadata_body(Stream *stream) {
     }
 }
 
-int is_metadata_header(Stream *stream) {
+int is_metadata_header(Stream *stream)
+{
     if (stream->status == E_STATUS_METADATA_HEADER) {
         return TRUE;
     } else {

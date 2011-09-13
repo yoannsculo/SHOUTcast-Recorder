@@ -9,7 +9,8 @@ static unsigned int pls_get_number_entries(FILE *fp);
 static int pls_get_field(char *buffer, char *value);
 static int pls_get_entries(FILE *fp, PlsFile *pls);
 
-void print_pls(PlsFile *pls) {
+void print_pls(PlsFile *pls)
+{
     unsigned int i;
     PlsEntry *entry = pls->entries;
     for (i=0;i<pls->number_entries;i++) {
@@ -18,7 +19,8 @@ void print_pls(PlsFile *pls) {
     }
 }
 
-int pls_load_file(char *filename, PlsFile *pls) {
+int pls_load_file(char *filename, PlsFile *pls)
+{
     unsigned int number_entries = 0; 
     //int res = 0;
     FILE *fp;
@@ -45,7 +47,8 @@ int pls_load_file(char *filename, PlsFile *pls) {
     return 0;
 }
 
-int init_pls_struct(PlsFile *pls, unsigned int number_entries) {
+int init_pls_struct(PlsFile *pls, unsigned int number_entries)
+{
     pls->number_entries = number_entries; 
     pls->entries = malloc(number_entries*sizeof(PlsEntry));
     pls->version = 0;
@@ -63,7 +66,8 @@ int init_pls_struct(PlsFile *pls, unsigned int number_entries) {
     }
 }
 
-static int pls_get_field(char *buffer, char *value) {
+static int pls_get_field(char *buffer, char *value)
+{
     char *ptr_begin;
     char *ptr_end;
     
@@ -74,7 +78,8 @@ static int pls_get_field(char *buffer, char *value) {
     return 0;
 }
 
-static int pls_get_entries(FILE *fp, PlsFile *pls) {
+static int pls_get_entries(FILE *fp, PlsFile *pls)
+{
     unsigned int i;
     char buffer[MAX_LINE_LENGTH];
     PlsEntry *entry = pls->entries;
@@ -99,7 +104,8 @@ static int pls_get_entries(FILE *fp, PlsFile *pls) {
     return 0; // TODO : use a better return value 
 }
 
-int is_pls_file(FILE *fp) {
+int is_pls_file(FILE *fp)
+{
     char buffer[MAX_LINE_LENGTH];
     
     fgets(buffer, MAX_LINE_LENGTH, fp);
@@ -122,7 +128,8 @@ int is_pls_file(FILE *fp) {
     return FALSE;
 }
 
-static unsigned int pls_get_number_entries(FILE *fp) {
+static unsigned int pls_get_number_entries(FILE *fp)
+{
     char buffer[MAX_LINE_LENGTH];
     char number_entries_str[3];
     

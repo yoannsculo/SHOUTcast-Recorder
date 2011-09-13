@@ -17,10 +17,6 @@ int load_stream_from_playlist(char *filename);
 // int main(int argc, char** argv)
 int main()
 {
-  	FILE *fichiersortie;
-  	
-    fichiersortie = fopen("toto.mp3","w"); 
-
     // TODO : handler parameters
     // TODO : add option --radio_list=<file>
     // TODO : add option --quiet
@@ -32,6 +28,7 @@ int main()
     // TODO : add function shoutr_stop(Stream *stream)
  
     load_stream_from_playlist("radio.pls");
+    // load_stream_from_playlist("frequence3.pls");
 
     // res = load_stream(&stream, "http://stream-hautdebit.frequence3.net:8000");
     // res = load_stream(&stream, "http://80.237.152.83:8000");
@@ -41,7 +38,8 @@ int main()
     return 0;
 }
 
-size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata) {
+size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata)
+{
     unsigned int i;
     char buffer;
     Stream *stream = (Stream *)userdata;

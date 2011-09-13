@@ -5,7 +5,8 @@
 
 #include "icy-string.h"
 
-int extract_header_fields(ICYHeader *header) {
+int extract_header_fields(ICYHeader *header)
+{
     char metaint[20];
     get_http_header_field(header->buffer, "icy-name", header->icy_name);
     get_http_header_field(header->buffer, "icy-notice1", header->icy_notice1);
@@ -18,7 +19,8 @@ int extract_header_fields(ICYHeader *header) {
     return 0;
 }
 
-int get_http_header_field(char *header, const char* field, char* value) {
+int get_http_header_field(char *header, const char* field, char* value)
+{
     int i;
     char *occurrence = NULL; 
     int content_pos = 0;
@@ -40,7 +42,8 @@ int get_http_header_field(char *header, const char* field, char* value) {
 }
 
 
-int get_metadata_field(char *metadata, const char* field, char* value) {
+int get_metadata_field(char *metadata, const char* field, char* value)
+{
     char *split;
     char *occurrence = NULL;
     split = strtok (metadata,";");
@@ -60,7 +63,8 @@ int get_metadata_field(char *metadata, const char* field, char* value) {
     return 1;
 }
 
-int is_cr_present(char *str, int pos) {
+int is_cr_present(char *str, int pos)
+{
     if (str[pos-1] == '\r' && str[pos] == '\n') {
         return TRUE;
     } else {
@@ -68,7 +72,8 @@ int is_cr_present(char *str, int pos) {
     }
 }
 
-int is_end_of_http_header(ICYHeader *header) {
+int is_end_of_http_header(ICYHeader *header)
+{
     unsigned int buffer_size = 0;
     buffer_size = header->ptr - header->buffer + 1;
     

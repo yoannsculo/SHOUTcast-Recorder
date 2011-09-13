@@ -4,7 +4,8 @@
 #include "types.h"
 #include "files.h"
 
-int get_extension(char *extension, char *string) {
+int get_extension(char *extension, char *string)
+{
     char *pstr = NULL;
     
     pstr = strrchr(string, '.');
@@ -18,7 +19,8 @@ int get_extension(char *extension, char *string) {
     return 0;
 }
 
-int is_pls_extension(char *string) {
+int is_pls_extension(char *string)
+{
     char extension[10];
     
     get_extension(extension, string);

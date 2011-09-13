@@ -5,7 +5,8 @@
 #include "header.h"
 #include "icy-string.h"
 
-int header_listener(Stream *stream, char *buffer) {
+int header_listener(Stream *stream, char *buffer)
+{
     if (!is_header(stream)) {
         return 1;
     }
@@ -36,7 +37,8 @@ int header_listener(Stream *stream, char *buffer) {
     return 0;
 }
 
-int is_header(Stream *stream) {
+int is_header(Stream *stream)
+{
     if (stream->status == E_STATUS_HEADER) {
         return TRUE;
     } else {
@@ -44,7 +46,8 @@ int is_header(Stream *stream) {
     }
 }
 
-int print_header(ICYHeader *header) {
+int print_header(ICYHeader *header)
+{
     printf("##################################\n");
     printf("Name\t: %s\n", header->icy_name);
     printf("icy-notice1\t: %s\n", header->icy_notice1);
