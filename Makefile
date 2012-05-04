@@ -13,7 +13,7 @@ LDFLAGS	   = -L/usr/lib -lcurl
 all: prepare $(EXEC)
 
 prepare:
-	-@([ ! -e $(BUILD_PATH) ] && mkdir $(BUILD_PATH))
+	@mkdir -p $(BUILD_PATH)
 
 $(BUILD_PATH)/%.o: src/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
