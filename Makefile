@@ -10,7 +10,10 @@ INCLUDES   = -Iinclude \
 CFLAGS	   = -W -Wall -g
 LDFLAGS	   = -L/usr/lib -lcurl
 
-all: $(EXEC)
+all: prepare $(EXEC)
+
+prepare:
+	-@([ ! -e $(BUILD_PATH) ] && mkdir $(BUILD_PATH))
 
 $(BUILD_PATH)/%.o: src/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
