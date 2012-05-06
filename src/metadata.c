@@ -79,7 +79,6 @@ int is_metadata_body(Stream *stream)
 		return TRUE;
 	else
 		return FALSE;
-	}
 }
 
 int is_metadata_header(Stream *stream)
