@@ -8,15 +8,14 @@
 
 int metadata_listener(Stream *stream, char *buffer)
 {
-	if (!is_metadata(stream)) {
+	if (!is_metadata(stream))
 		return 1;
-	}
 
-	if (is_metadata_header(stream)) {
+	if (is_metadata_header(stream))
 		return metadata_header_handler(stream, buffer);
-	} else if (is_metadata_body(stream)) {
+	else if (is_metadata_body(stream))
 		return metadata_body_handler(stream, buffer);
-	}
+
 	return 0;
 }
 
@@ -68,27 +67,25 @@ int metadata_body_handler(Stream *stream, char *buffer)
 
 int is_metadata(Stream *stream)
 {
-	if (is_metadata_body(stream) || is_metadata_header(stream)) {
+	if (is_metadata_body(stream) || is_metadata_header(stream))
 		return TRUE;
-	} else {
+	else
 		return FALSE;
-	}
 }
 
 int is_metadata_body(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_BODY) {
+	if (stream->status == E_STATUS_METADATA_BODY)
 		return TRUE;
-	} else {
+	else
 		return FALSE;
 	}
 }
 
 int is_metadata_header(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_HEADER) {
+	if (stream->status == E_STATUS_METADATA_HEADER)
 		return TRUE;
-	} else {
+	else
 		return FALSE;
-	}
 }
