@@ -39,11 +39,10 @@ int header_listener(Stream *stream, char *buffer)
 
 int is_header(Stream *stream)
 {
-	if (stream->status == E_STATUS_HEADER) {
+	if (stream->status == E_STATUS_HEADER)
 		return TRUE;
-	} else {
+	else
 		return FALSE;
-	}
 }
 
 int print_header(ICYHeader *header)
