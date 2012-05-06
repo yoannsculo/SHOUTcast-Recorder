@@ -27,7 +27,11 @@ int main()
 	// TODO : add function shoutr_start(Stream *stream)
 	// TODO : add function shoutr_stop(Stream *stream)
 
-	load_stream_from_playlist("radio.pls");
+	if (load_stream_from_playlist("radio.pls") < 0) {
+		printf("Couldn't load stream from playlist\n");
+		return -1;
+	}
+
 	// load_stream_from_playlist("frequence3.pls");
 
 	// res = load_stream(&stream, "http://stream-hautdebit.frequence3.net:8000");
