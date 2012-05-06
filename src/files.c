@@ -23,12 +23,14 @@ int is_pls_extension(char *string)
 {
 	char extension[10];
 
-	get_extension(extension, string);
-	if (!strcmp(extension, "pls")) {
-		return TRUE;
-	}
-	else {
+	if (string == NULL)
 		return FALSE;
-	}
+
+	get_extension(extension, string);
+
+	if (!strcmp(extension, "pls"))
+		return TRUE;
+	else
+		return FALSE;
 }
 
