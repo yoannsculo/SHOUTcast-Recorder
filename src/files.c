@@ -8,6 +8,9 @@ int get_extension(char *extension, char *string)
 {
 	char *pstr = NULL;
 
+	if (string == NULL)
+		return -1;
+
 	pstr = strrchr(string, '.');
 	if (pstr == NULL) {
 		strcpy(extension, "");
