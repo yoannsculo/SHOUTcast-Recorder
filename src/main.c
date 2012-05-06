@@ -11,12 +11,15 @@
 #include "parsing.h"
 #include "shoutcast.h"
 #include "curl.h"
+#include "log.h"
 
 int load_stream_from_playlist(char *filename);
 
 // int main(int argc, char** argv)
 int main()
 {
+	int ret = 0;
+
 	// TODO : handler parameters
 	// TODO : add option --radio_list=<file>
 	// TODO : add option --quiet
@@ -27,9 +30,11 @@ int main()
 	// TODO : add function shoutr_start(Stream *stream)
 	// TODO : add function shoutr_stop(Stream *stream)
 
-	if (load_stream_from_playlist("radio.pls") < 0) {
+	log_open_files();
+
+	if ((ret = load_stream_from_playlist("frequence3.pls")) < 0) {
 		printf("Couldn't load stream from playlist\n");
-		return -1;
+		goto err;
 	}
 
 	// load_stream_from_playlist("frequence3.pls");
@@ -38,8 +43,9 @@ int main()
 	// res = load_stream(&stream, "http://80.237.152.83:8000");
 	// res = load_stream(&stream, "http://88.190.24.47:80");
 	// res = load_stream(&stream, "http://88.191.122.117:5000");
-
-	return 0;
+err:
+	log_close_files();
+	return ret;
 }
 
 size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata)

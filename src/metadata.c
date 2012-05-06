@@ -6,6 +6,8 @@
 #include "metadata.h"
 #include "icy-string.h"
 
+#include "log.h"
+
 int metadata_listener(Stream *stream, char *buffer)
 {
 	if (!is_metadata(stream))
@@ -44,9 +46,12 @@ int metadata_body_handler(Stream *stream, char *buffer)
 	*metadata->ptr = *buffer;
 	if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
 		char metadata_content[500];
+		char stream_title[500];
 		strncpy(metadata_content, metadata->buffer, metadata->size);
 		get_metadata_field(metadata_content, "StreamTitle", stream->stream_title);
-		printf("%s\n", stream->stream_title);
+		sprintf(stream_title, "%s\n", stream->stream_title);
+		printf("%s", stream_title);
+		slog_prog(stream_title);
 		stream->metadata_count++;
 
 		{
