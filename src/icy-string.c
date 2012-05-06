@@ -76,14 +76,14 @@ int is_end_of_http_header(ICYHeader *header)
 	unsigned int buffer_size = 0;
 	buffer_size = header->ptr - header->buffer + 1;
 
-	if (buffer_size < 4) {
+	if (buffer_size < 4)
 		return FALSE;
-	}
 
-	if (*(header->ptr-3) == '\r' && *(header->ptr-2) == '\n' &&
-			*(header->ptr-1) == '\r' && *(header->ptr)   == '\n') {
+	if (*(header->ptr-3) == '\r' &&
+	    *(header->ptr-2) == '\n' &&
+	    *(header->ptr-1) == '\r' &&
+	    *(header->ptr)   == '\n')
 		return TRUE;
-	} else {
+	else
 		return FALSE;
-	}
 }
