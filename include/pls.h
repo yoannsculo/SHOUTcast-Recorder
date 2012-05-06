@@ -4,15 +4,15 @@
 #define MAX_LINE_LENGTH 500
 
 typedef struct {
-    char file[500];
-    char title[500];
-    int length;
+	char file[500];
+	char title[500];
+	int length;
 } PlsEntry;
 
 typedef struct {
-    unsigned int number_entries;
-    PlsEntry *entries;
-    int version;
+	unsigned int number_entries;
+	PlsEntry *entries;
+	int version;
 } PlsFile;
 
 int init_pls_struct(PlsFile *pls, unsigned int number_entries);
