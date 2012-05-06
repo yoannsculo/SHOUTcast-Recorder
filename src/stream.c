@@ -51,36 +51,36 @@ int load_stream_from_playlist(char *filename)
 {
 	Stream stream;
 	PlsFile pls;
-	int res = 0;
+	int ret = 0;
 
 	if (filename == NULL) {
-		return -1;
+		ret = -1;
+		goto early_err;
 	}
 
-	if (is_pls_extension(filename) == FALSE) {
-		return -1;
+	if (!is_pls_extension(filename)) {
+		ret = -1;
+		goto early_err;
 	}
 
-	res = pls_load_file(filename, &pls);
-	if (res < 0) {
+	if ((ret = pls_load_file(filename, &pls)) < 0) {
 		printf("Error : Couldn't load pls file\n");
-		return -1;
+		goto early_err;
 	}
 
-	res = load_stream(&stream, pls.entries->file);
-	if (res < 0) {
+	if ((ret = load_stream(&stream, pls.entries->file)) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
-		return -1;
+		goto err;
 	}
 
-	res = read_stream(&stream);
-	if (res) {
+	if ((ret = read_stream(&stream)) < 0) {
 		printf("Error : Couldn't read Shoutcast stream\n");
-		return -1;
+		goto err;
 	}
 
-	free(pls.entries); 
+err:
+	free(pls.entries);
+early_err:
+	return ret;
 
-	return 0; // TODO : define better result
 }
-
