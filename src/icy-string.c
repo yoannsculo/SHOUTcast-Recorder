@@ -65,11 +65,10 @@ int get_metadata_field(char *metadata, const char* field, char* value)
 
 int is_cr_present(char *str, int pos)
 {
-	if (str[pos-1] == '\r' && str[pos] == '\n') {
+	if (str[pos-1] == '\r' && str[pos] == '\n')
 		return TRUE;
-	} else {
+	else
 		return FALSE;
-	}
 }
 
 int is_end_of_http_header(ICYHeader *header)
