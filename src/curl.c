@@ -7,18 +7,20 @@
 int read_stream(Stream *stream)
 {
 	CURL *curl;
-	CURLcode res;
+	CURLcode curl_res;
+	struct curl_slist *headers = NULL;
+	int ret = 0;
 
 	if (stream->url == NULL) {
-		return 1;
+		ret = -1;
+		goto early_err;
 	}
 
-	curl = curl_easy_init();
-	if (curl == NULL) {
-		return 1;
+	if ((curl = curl_easy_init()) == NULL) {
+		ret = -1;
+		goto early_err;
 	}
 
-	struct curl_slist *headers = NULL;
 	headers = curl_slist_append(headers, "Icy-MetaData:1"); // On force la récupération des metadata
 
 	curl_easy_setopt(curl, CURLOPT_URL, stream->url);
@@ -26,8 +28,15 @@ int read_stream(Stream *stream)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, parse_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, stream);
 
-	res = curl_easy_perform(curl);
+	if ((curl_res = curl_easy_perform(curl)) != 0) {
+		printf("ERROR : %s\n", curl_easy_strerror(curl_res));
+		ret = -1;
+		goto err;
+	}
+
+err:
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(curl);
-	return 0;
+early_err:
+	return ret;
 }
