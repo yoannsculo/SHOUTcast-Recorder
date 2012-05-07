@@ -5,13 +5,20 @@
 #include "header.h"
 #include "icy-string.h"
 
+#define HEADER_MAX 20000 // Max parsed bytes to get a header
+
 int header_listener(Stream *stream, char *buffer)
 {
-	if (!is_header(stream)) {
+	if (!is_header(stream))
 		return 1;
-	}
 
 	ICYHeader *header = &stream->header;
+
+	if (stream->bytes_count_total >= 20000) {
+		printf("Error : couldn't retrieve server information.\n");
+		exit(-1);
+	}
+
 	*header->ptr = *buffer;
 
 	if (is_end_of_http_header(header)) {
