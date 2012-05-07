@@ -11,7 +11,7 @@
 int metadata_listener(Stream *stream, char *buffer)
 {
 	if (!is_metadata(stream))
-		return 1;
+		return -1;
 
 	if (is_metadata_header(stream))
 		return metadata_header_handler(stream, buffer);

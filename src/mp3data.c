@@ -9,7 +9,7 @@
 int mp3data_listener(Stream *stream, char *buffer)
 {
 	if (!is_mp3data(stream))
-		return 1;
+		return -1;
 
 	Mp3Data *mp3data = &stream->mp3data;
 
