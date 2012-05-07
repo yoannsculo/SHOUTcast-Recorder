@@ -14,7 +14,7 @@ int header_listener(Stream *stream, char *buffer)
 
 	ICYHeader *header = &stream->header;
 
-	if (stream->bytes_count_total >= 20000) {
+	if (stream->bytes_count_total >= HEADER_MAX) {
 		printf("Error : couldn't retrieve server information.\n");
 		exit(-1);
 	}
