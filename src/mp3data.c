@@ -8,9 +8,8 @@
 
 int mp3data_listener(Stream *stream, char *buffer)
 {
-	if (!is_mp3data(stream)) {
+	if (!is_mp3data(stream))
 		return 1;
-	}
 
 	Mp3Data *mp3data = &stream->mp3data;
 
@@ -19,18 +18,16 @@ int mp3data_listener(Stream *stream, char *buffer)
 	mp3data->ptr++;
 	stream->bytes_count++;
 
-	if (stream->bytes_count == stream->header.metaint) {
+	if (stream->bytes_count == stream->header.metaint)
 		stream->status = E_STATUS_METADATA_HEADER;
-	}
 
 	return 0;
 }
 
 int is_mp3data(Stream *stream)
 {
-	if (stream->status == E_STATUS_MP3DATA) {
+	if (stream->status == E_STATUS_MP3DATA)
 		return TRUE;
-	} else {
+	else {
 		return FALSE;
-	}
 }
