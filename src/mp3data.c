@@ -28,6 +28,6 @@ int is_mp3data(Stream *stream)
 {
 	if (stream->status == E_STATUS_MP3DATA)
 		return TRUE;
-	else {
+	else
 		return FALSE;
 }
