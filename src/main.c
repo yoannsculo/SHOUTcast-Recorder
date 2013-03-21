@@ -15,35 +15,70 @@
 
 int load_stream_from_playlist(char *filename);
 
-// int main(int argc, char** argv)
-int main()
+void usage(void)
 {
-	int ret = 0;
+	printf("Usage: shoutr [OPTIONS]\n");
+	printf("       -p\t: playlist file\n");
+	printf("       -u\t: stream url\n");
+}
 
-	// TODO : handler parameters
-	// TODO : add option --radio_list=<file>
-	// TODO : add option --quiet
-	// TODO : add option --ncurses
+int main(int argc, char *argv[])
+{
+	int ret = -1;
+	int pflag = 0;
+	int uflag = 0;
+	int c;
+	char *cvalue = NULL;
 
-	// TODO : add a big shoucast radio list with lots of radios 
-
-	// TODO : add function shoutr_start(Stream *stream)
-	// TODO : add function shoutr_stop(Stream *stream)
-
-	if ((ret = log_open_files()) < 0)
-		goto err_early;
-
-	if ((ret = load_stream_from_playlist("frequence3.pls")) < 0) {
-		printf("Couldn't load stream from playlist\n");
-		goto err;
+	while ((c = getopt(argc, argv, "p:u:h")) != -1) {
+		switch(c) {
+			// playlist
+			case 'p':
+				pflag = 1;
+				cvalue = optarg;
+				break;
+			// stream url
+			case 'u':
+				uflag = 1;
+				cvalue = optarg;
+				break;
+			case 'h':
+			default:
+				usage();
+				goto err_early;
+				break;
+		}
 	}
 
-	// load_stream_from_playlist("frequence3.pls");
 
-	// res = load_stream(&stream, "http://stream-hautdebit.frequence3.net:8000");
-	// res = load_stream(&stream, "http://80.237.152.83:8000");
+	if (pflag && uflag) {
+		usage();
+		goto err_early;
+	}
+
+	if ((ret = log_open_files()) < 0) {
+		printf("Couldn't open log files.\n");
+		goto err_early;
+	}
+
+	if (pflag) {
+		if ((ret = load_stream_from_playlist(cvalue)) < 0) {
+			printf("Couldn't load stream from playlist\n");
+			goto err;
+		}
+	}
+
+	if (uflag) {
+		Stream stream;
+		load_stream(&stream, cvalue);
+
+		if ((ret = read_stream(&stream)) < 0) {
+			printf("Error : Couldn't read Shoutcast stream\n");
+			goto err;
+		}
+	}
+
 	// res = load_stream(&stream, "http://88.190.24.47:80");
-	// res = load_stream(&stream, "http://88.191.122.117:5000");
 err:
 	log_close_files();
 err_early:
