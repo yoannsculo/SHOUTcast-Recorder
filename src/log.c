@@ -34,13 +34,13 @@ int log_open_files(void)
 
 	fp_log = fopen("shoutr.log","a");
 	if (fp_log == NULL) {
-		printf("Couldn't open log file\n");
+		printf("Couldn't open shoutr.log file\n");
 		return -1;
 	}
 
 	fp_prog = fopen("prog.log","a");
 	if (fp_prog == NULL) {
-		printf("Couldn't open log file\n");
+		printf("Couldn't open prog.log file\n");
 		fclose(fp_log);
 		return -1;
 	}
