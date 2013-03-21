@@ -29,6 +29,9 @@ static int get_time(char *string)
 
 int log_open_files(void)
 {
+	if (fp_log != NULL)
+		return -1;
+
 	fp_log = fopen("shoutr.log","a");
 	if (fp_log == NULL) {
 		printf("Couldn't open log file\n");

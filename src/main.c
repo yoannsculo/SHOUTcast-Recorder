@@ -30,7 +30,8 @@ int main()
 	// TODO : add function shoutr_start(Stream *stream)
 	// TODO : add function shoutr_stop(Stream *stream)
 
-	log_open_files();
+	if ((ret = log_open_files()) < 0)
+		goto err_early;
 
 	if ((ret = load_stream_from_playlist("frequence3.pls")) < 0) {
 		printf("Couldn't load stream from playlist\n");
@@ -45,6 +46,7 @@ int main()
 	// res = load_stream(&stream, "http://88.191.122.117:5000");
 err:
 	log_close_files();
+err_early:
 	return ret;
 }
 
