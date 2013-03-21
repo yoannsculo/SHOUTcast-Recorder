@@ -3,7 +3,14 @@ SHOUTcast Recorder
 Author : Yoann Sculo
 
 SHOUTcast Recorder is able to record and store SHOUTcast stream automatically
-into mp3 format with ID3Tags.
+into separate mp3 files. This software was initially conceived to understand
+the SHOUTcast protocol, not really to record web radios ;) The fun part is to
+play with the protocol !
+
+Dependencies
+------------
+
+- libcurl
 
 How does it work ?
 ------------------
@@ -16,6 +23,28 @@ How does it work ?
 	- mp3data we store in memory
 - At the end of each block, we write gathered MP3 data into an external file
 - Now we can enjoy downloaded music :)
+
+How to run it
+-------------
+
+Here are two examples :
+
+	./shoutr -u http://88.190.24.47:80
+
+or
+
+	./shoutr -p frequence3.pls
+
+TODO
+----
+
+Some interesting features to add :
+
+- add option --quiet
+- add option --ncurses
+- add a big shoucast radio list with lots of radios 
+- add shoutr_start and shoutr_stop functions.
+- add id3tags
 
 LICENSE
 -------
