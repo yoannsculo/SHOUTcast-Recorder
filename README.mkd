@@ -1,6 +1,5 @@
 SHOUTcast Recorder
 ==================
-Author : Yoann Sculo
 
 SHOUTcast Recorder is able to record and store SHOUTcast stream automatically
 into separate mp3 files. This software was initially conceived to understand
@@ -51,3 +50,8 @@ LICENSE
 
 Licensed under the terms of the MIT License (MIT)
 See the file COPYING for details.
+
+Contact
+-------
+
+Yoann Sculo - <yoann.sculo@gmail.com>
