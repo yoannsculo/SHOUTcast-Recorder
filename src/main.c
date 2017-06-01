@@ -3,10 +3,14 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef _WIN32
+#include <io.h>
+#include "../shoutcastRecorder/shoutcastRecorder/getopt.h"
+#else
 #include <unistd.h> // linux
 
 #include <regex.h>
-
+#endif
 #include "types.h"
 #include "parsing.h"
 #include "shoutcast.h"
@@ -20,6 +24,9 @@ void usage(void)
 	printf("Usage: shoutr [OPTIONS]\n");
 	printf("       -p\t: playlist file\n");
 	printf("       -u\t: stream url\n");
+	printf("           -x\t: proxy (default no proxy)\n");
+	printf("           -f\t: basefilename (default radio)\n");
+	printf("           -d\t: recording duration (in seconds, default 0 = unlimited)\n");
 }
 
 int main(int argc, char *argv[])
@@ -29,8 +36,11 @@ int main(int argc, char *argv[])
 	int uflag = 0;
 	int c;
 	char *cvalue = NULL;
+	char *proxy = NULL;
+	char *basefilename = "radio";
+	char *duration = "0";
 
-	while ((c = getopt(argc, argv, "p:u:h")) != -1) {
+	while ((c = getopt(argc, argv, "p:u:h:x:f:d:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -41,6 +51,18 @@ int main(int argc, char *argv[])
 			case 'u':
 				uflag = 1;
 				cvalue = optarg;
+				break;
+			// proxy
+			case 'x':
+				proxy = optarg;
+				break;
+			// basefilename
+			case 'f':
+				basefilename = optarg;
+				break;
+			// duration
+			case 'd':
+				duration = optarg;
 				break;
 			case 'h':
 			default:
@@ -70,7 +92,7 @@ int main(int argc, char *argv[])
 
 	if (uflag) {
 		Stream stream;
-		load_stream(&stream, cvalue);
+		 load_stream(&stream, cvalue, proxy, basefilename, duration);
 
 		if ((ret = read_stream(&stream)) < 0) {
 			printf("Error : Couldn't read Shoutcast stream\n");
@@ -85,26 +107,49 @@ err_early:
 	return ret;
 }
 
+size_t parse_header(void *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	unsigned int i;
+	char buffer;
+	Stream *stream = (Stream *)userdata;
+	size_t numbytes = size * nmemb;
+
+	//stream->header.buffer;
+	//copy *ptr to neader.buffer starting at header.ptr position
+	void* dest = stream->header.ptr;
+	memcpy(dest, ptr, numbytes);
+	
+	for (i=0;i<numbytes;i++) {
+		buffer = ((char*)ptr)[i];
+		global_listener(stream, &buffer);
+		stream->bytes_count_total++;
+	}
+	
+    printf("%.*s", (int) numbytes, (char*)ptr);	
+    return numbytes;
+}
+
 size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	unsigned int i;
 	char buffer;
 	Stream *stream = (Stream *)userdata;
+	size_t numbytes = size * nmemb;
 
-	stream->mp3data.buffer = (char*) malloc(nmemb);
+	stream->mp3data.buffer = (char*) malloc(numbytes);
 	stream->mp3data.ptr = stream->mp3data.buffer; 
 
-	for (i=0;i<nmemb;i++) {
+	for (i=0;i<numbytes;i++) {
 		buffer = ((char*)ptr)[i];
 		global_listener(stream, &buffer);
 		stream->bytes_count_total++;
 	}
 
-	write_data(stream, &size); 
+	write_data(stream); 
 	free(stream->mp3data.buffer);
 	stream->mp3data.size = 0;
 
 	stream->blocks_count++;
 
-	return nmemb;
+	return numbytes;
 }

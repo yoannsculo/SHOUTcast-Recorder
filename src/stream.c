@@ -8,8 +8,10 @@
 #include "pls.h"
 #include "curl.h"
 
-int load_stream(Stream *stream, const char *url)
+int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration)
 {
+	char filename[255] = "";
+
 	ICYHeader *header = &stream->header;
 	MetaData *metadata = &stream->metadata;
 	Mp3Data *mp3data = &stream->mp3data;
@@ -40,14 +42,18 @@ int load_stream(Stream *stream, const char *url)
 
 	stream->status = E_STATUS_HEADER;
 
-	stream->output_stream = fopen("radio0.mp3","w");
-	if (strcpy(stream->url, url) != NULL)
+	stream->duration = atoi(duration);
+
+	if ((strcpy(stream->url, url) != NULL) && (strcpy(stream->proxy, proxy) != NULL)&& (strcpy(stream->basefilename, basefilename) != NULL))
+	{
+		sprintf(filename, "%s%d.mp3", stream->basefilename, stream->metadata_count);
+		stream->output_stream = fopen(filename, "wb");
 		return 0;
-	else
-		return 1;
+	}
+	return -1;
 }
 
-int load_stream_from_playlist(char *filename)
+int load_stream_from_playlist(char *filename, const char *proxy, const char *basefilename, const char *duration)
 {
 	Stream stream;
 	PlsFile pls;
@@ -68,7 +74,7 @@ int load_stream_from_playlist(char *filename)
 		goto early_err;
 	}
 
-	if ((ret = load_stream(&stream, pls.entries->file)) < 0) {
+	if ((ret = load_stream(&stream, pls.entries->file, proxy, basefilename, duration)) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
 		goto err;
 	}

@@ -28,12 +28,23 @@ How to run it
 
 Here are two examples :
 
-	./shoutr -u http://88.190.24.47:80
+	./shoutr -u http://88.190.24.47:80 
 
 or
 
 	./shoutr -p frequence3.pls
 
+Additional commandline options
+	-x proxy	defines proxy to use, (see CURLOPT_PROXY)
+	-f hotmusic	defines the base name of the mp3 file(s) created
+	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
+	
+without these additional commandline options specified
+	no proxy is used (note: libcurl respects the proxy environment variables
+		named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY)
+	basename will be radio###.mp3 (where ### is incrementing number)
+	duration will be infinite (see CURLOPT_TIMEOUT)
+	
 TODO
 ----
 
@@ -44,6 +55,7 @@ Some interesting features to add :
 - add a big shoucast radio list with lots of radios 
 - add shoutr_start and shoutr_stop functions.
 - add id3tags
+- add option to name downloaded music using metadata
 
 LICENSE
 -------

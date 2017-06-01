@@ -5,6 +5,7 @@
 
 static FILE *fp_log;
 static FILE *fp_prog;
+static char current_time[20];
 
 static int get_time(char *string)
 {
@@ -61,8 +62,6 @@ int log_close_files(void)
 
 static int log_append(FILE *fp, char *line)
 {
-	char current_time[20];
-
 	if (fp == NULL || line == NULL)
 		return -1;
 

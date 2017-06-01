@@ -21,9 +21,9 @@ void global_listener(Stream *stream, char *buffer)
 		mp3data_listener(stream, buffer);
 }
 
-int write_data(Stream *stream, size_t *size)
+int write_data(Stream *stream)
 {
-	int written = fwrite(stream->mp3data.buffer, *size,
+	int written = fwrite(stream->mp3data.buffer, sizeof(char),
 			stream->mp3data.size,
 			(FILE *)stream->output_stream);
 	return written;

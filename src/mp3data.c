@@ -8,10 +8,11 @@
 
 int mp3data_listener(Stream *stream, char *buffer)
 {
+	Mp3Data *mp3data;
 	if (!is_mp3data(stream))
 		return -1;
 
-	Mp3Data *mp3data = &stream->mp3data;
+	mp3data = &stream->mp3data;
 
 	*mp3data->ptr = *buffer;
 	mp3data->size++; 

@@ -27,13 +27,14 @@ int get_http_header_field(char *header, const char* field, char* value)
 
 	occurrence  = strstr(header, field);
 	content_pos = strlen(field)+1;
-	// TODO : Test NULL value 
-	for (i=content_pos; occurrence[i] != '\0';i++) {
-		if (is_cr_present(occurrence, i)) {
-			// "<field>:" is deleted
-			strncpy(value, occurrence+content_pos, i-content_pos);
-			value[i-content_pos-1] = '\0';
-			return 0;
+	if (occurrence != NULL)	{
+		for (i=content_pos; occurrence[i] != '\0';i++) {
+			if (is_cr_present(occurrence, i)) {
+				// "<field>:" is deleted
+				strncpy(value, occurrence+content_pos, i-content_pos);
+				value[i-content_pos-1] = '\0';
+				return 0;
+			}
 		}
 	}
 	// Value hasn't been found
