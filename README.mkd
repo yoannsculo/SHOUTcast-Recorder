@@ -41,8 +41,8 @@ Additional commandline options
 	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
 	
 without these additional commandline options specified
-	no proxy is used (note: libcurl respects the proxy environment variables
-		named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY)
+
+	no proxy is used (note: libcurl respects the proxy environment variables named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY)
 	basename will be radio###.mp3 (where ### is incrementing number)
 	duration will be infinite (see CURLOPT_TIMEOUT)
 	
