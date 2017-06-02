@@ -37,7 +37,10 @@ int main(int argc, char *argv[])
 	int c;
 	char *cvalue = NULL;
 	char *proxy = NULL;
-	char *basefilename = "radio";
+	
+	char* basefilename = malloc(255*sizeof(char));
+	snprintf(basefilename, 255, "radio");
+	
 	char *duration = "0";
 
 	while ((c = getopt(argc, argv, "p:u:h:x:f:d:")) != -1) {

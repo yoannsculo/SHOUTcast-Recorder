@@ -10,6 +10,7 @@
 
 int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration)
 {
+	int success = TRUE;
 	char filename[255] = "";
 
 	ICYHeader *header = &stream->header;
@@ -43,14 +44,24 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	stream->status = E_STATUS_HEADER;
 
 	stream->duration = atoi(duration);
-
-	if ((strcpy(stream->url, url) != NULL) && (strcpy(stream->proxy, proxy) != NULL)&& (strcpy(stream->basefilename, basefilename) != NULL))
+	
+	memset(stream->proxy, 0, 255);
+	memset(stream->url, 0, 255);
+	memset(stream->basefilename, 0, 255);
+	memset(filename, 0, 255);
+	
+	if (proxy != NULL) {
+		success = strncpy(stream->proxy, proxy, 254) != NULL;
+	}
+	
+	success = success && ((strncpy(stream->url, url, 254) != NULL) && (strncpy(stream->basefilename, basefilename, 254) != NULL));
+	if (success)
 	{
-		sprintf(filename, "%s%d.mp3", stream->basefilename, stream->metadata_count);
+		snprintf(filename, 254, "%s%d.mp3", stream->basefilename, stream->metadata_count);
 		stream->output_stream = fopen(filename, "wb");
 		return 0;
 	}
-	return -1;
+	return 1;
 }
 
 int load_stream_from_playlist(char *filename, const char *proxy, const char *basefilename, const char *duration)
