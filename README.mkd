@@ -35,6 +35,7 @@ or
 	./shoutr -p frequence3.pls
 
 Additional commandline options
+
 	-x proxy	defines proxy to use, (see CURLOPT_PROXY)
 	-f hotmusic	defines the base name of the mp3 file(s) created
 	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
