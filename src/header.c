@@ -9,10 +9,11 @@
 
 int header_listener(Stream *stream, char *buffer)
 {
+	ICYHeader *header;
 	if (!is_header(stream))
 		return 1;
 
-	ICYHeader *header = &stream->header;
+	header = &stream->header;
 
 	if (stream->bytes_count_total >= HEADER_MAX) {
 		printf("Error : couldn't retrieve server information.\n");

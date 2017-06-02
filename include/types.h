@@ -48,6 +48,9 @@ typedef struct
 typedef struct
 {
 	char url[255];          // Stream url
+	char proxy[255];		// Network proxy
+	char basefilename[255]; // basefilename of output mp3 file
+	unsigned int duration;  // max recording duration
 	FILE *output_stream;    // Output MP3 file
 	char stream_title[500]; // Current title
 

@@ -25,6 +25,10 @@ int read_stream(Stream *stream)
 
 	curl_easy_setopt(curl, CURLOPT_URL, stream->url);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	curl_easy_setopt(curl, CURLOPT_PROXY, stream->proxy);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, stream->duration);
+	curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
+	curl_easy_setopt(curl, CURLOPT_HEADERDATA, stream);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, parse_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, stream);
 
