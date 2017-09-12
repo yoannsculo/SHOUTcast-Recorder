@@ -14,7 +14,7 @@ void print_pls(PlsFile *pls)
 	unsigned int i;
 	PlsEntry *entry = pls->entries;
 	for (i=0;i<pls->number_entries;i++) {
-		printf("[%2d] %s - %s\n", i, entry->file, entry->title);
+		printf("%2d %s\n", i, entry->file);
 		entry++;
 	}
 }
@@ -28,10 +28,12 @@ int pls_load_file(char *filename, PlsFile *pls)
 	fp = fopen(filename, "r");
 
 	if (fp == NULL) {
+		printf("fopen(%s) failed\n", filename);
 		return -1;
         }
 
 	if (!is_pls_file(fp)) {
+		printf("%s is not a pls file\n", filename);
 		return -1;
 	}
 
@@ -53,13 +55,14 @@ int init_pls_struct(PlsFile *pls, unsigned int number_entries)
 	pls->entries = malloc(number_entries*sizeof(PlsEntry));
 	pls->version = 0;
 	if (pls->entries == NULL) {
+		printf("no entries\n");
 		return -1;
 	} else {
 		unsigned int i;
 		PlsEntry *entry = pls->entries;
 		for (i=0;i<pls->number_entries;i++) {
-			strcpy(entry->file, "\0");
-			strcpy(entry->title, "\0");
+			memset(entry->file, 0, sizeof entry->file);
+			memset(entry->title, 0, sizeof entry->file);
 			entry++;
 		}
 		return 0;
@@ -72,7 +75,7 @@ static int pls_get_field(char *buffer, char *value)
 	char *ptr_end;
 
 	ptr_begin = strstr(buffer, "=")+1;
-	ptr_end = strstr(buffer, "\n"); 
+	ptr_end = strstr(buffer, "\n")-1; 
 	strncpy(value, ptr_begin, (int)(ptr_end - ptr_begin));
 
 	return 0;
@@ -86,20 +89,13 @@ static int pls_get_entries(FILE *fp, PlsFile *pls)
 
 	fseek(fp, 0 ,SEEK_SET);
 	fgets(buffer, MAX_LINE_LENGTH, fp);
-	fgets(buffer, MAX_LINE_LENGTH, fp);
 
 	for (i=0;i<pls->number_entries;i++) {
 		fgets(buffer, MAX_LINE_LENGTH, fp);
-		// TODO : gérer le NULL
-
-		pls_get_field(buffer, entry->file);
-
-		fgets(buffer, MAX_LINE_LENGTH, fp);
-		pls_get_field(buffer, entry->title);
-
-		fgets(buffer, MAX_LINE_LENGTH, fp);
-		// strcpy(entry->length, buffer);
-		entry++;
+		if (strstr(buffer, "File") != NULL) {
+			pls_get_field(buffer, entry->file);
+			entry++;
+		}
 	}
 	return 0; // TODO : use a better return value 
 }
@@ -107,10 +103,12 @@ static int pls_get_entries(FILE *fp, PlsFile *pls)
 int is_pls_file(FILE *fp)
 {
 	char buffer[MAX_LINE_LENGTH];
-
+	fseek(fp, 0 ,SEEK_SET);
 	fgets(buffer, MAX_LINE_LENGTH, fp);
-	if (strcmp(buffer, "[playlist]\n") != 0) {
+	
+	if (strncmp(buffer, "[playlist]", 10) != 0) {
 		fseek(fp, 0 ,SEEK_SET);
+		printf("no [playlist] in %s\n", buffer);
 		return FALSE;
 	}
 
@@ -124,7 +122,7 @@ int is_pls_file(FILE *fp)
 		fseek(fp, 0, SEEK_SET);
 		return TRUE;
 	}
-
+	printf("no [Version=]\n");
 	return FALSE;
 }
 
@@ -135,12 +133,12 @@ static unsigned int pls_get_number_entries(FILE *fp)
 
 	fseek(fp, 0, SEEK_SET);
 	fgets(buffer, MAX_LINE_LENGTH, fp);
-	fgets(buffer, MAX_LINE_LENGTH, fp);
-
-	if (strstr(buffer, "NumberOfEntries=") != NULL) {
-		sprintf(number_entries_str, "%c%c", buffer[16], buffer[17]);
-		return (unsigned int)atoi(number_entries_str);
-	} else {
-		return 0;
+	while (!feof (fp)) {
+		fgets(buffer, MAX_LINE_LENGTH, fp);
+		if (strstr(buffer, "NumberOfEntries=") != NULL) {
+			sprintf(number_entries_str, "%c%c", buffer[16], buffer[17]);
+			return (unsigned int)atoi(number_entries_str);
+		} 
 	}
+	return 0;
 }

@@ -17,7 +17,7 @@
 #include "curl.h"
 #include "log.h"
 
-int load_stream_from_playlist(char *filename);
+int load_stream_from_playlist(char *filename, const char *proxy, const char *basefilename, const char *duration);
 
 void usage(void)
 {
@@ -37,12 +37,11 @@ int main(int argc, char *argv[])
 	int c;
 	char *cvalue = NULL;
 	char *proxy = NULL;
-	
-	char* basefilename = malloc(255*sizeof(char));
-	snprintf(basefilename, 255, "radio");
-	
 	char *duration = "0";
-
+	
+	char* basefilename = (char*) malloc(255*sizeof(char));
+	sprintf(basefilename, "radio");
+	
 	while ((c = getopt(argc, argv, "p:u:h:x:f:d:")) != -1) {
 		switch(c) {
 			// playlist
@@ -87,7 +86,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (pflag) {
-		if ((ret = load_stream_from_playlist(cvalue)) < 0) {
+		//if ((ret = load_stream_from_playlist(cvalue)) < 0) 
+		if ((ret = load_stream_from_playlist(cvalue, proxy, basefilename, duration)) < 0)
+		{
 			printf("Couldn't load stream from playlist\n");
 			goto err;
 		}

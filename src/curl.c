@@ -12,11 +12,16 @@ int read_stream(Stream *stream)
 	int ret = 0;
 
 	if (stream->url == NULL) {
+		printf("Error : stream->url null\n");
 		ret = -1;
 		goto early_err;
 	}
 
+	printf("stream->url [%s]\n", stream->url);
+	printf("stream->proxy [%s]\n", stream->proxy);
+	
 	if ((curl = curl_easy_init()) == NULL) {
+		printf("Error : curl_easy_init\n");
 		ret = -1;
 		goto early_err;
 	}
@@ -32,8 +37,9 @@ int read_stream(Stream *stream)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, parse_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, stream);
 
-	if ((curl_res = curl_easy_perform(curl)) != 0) {
-		printf("ERROR : %s\n", curl_easy_strerror(curl_res));
+	curl_res = curl_easy_perform(curl);
+	if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {
+		printf("ERROR %2d: %s\n", curl_res, curl_easy_strerror(curl_res));
 		ret = -1;
 		goto err;
 	}
