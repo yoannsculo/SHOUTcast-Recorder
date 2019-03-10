@@ -68,17 +68,14 @@ int load_stream_from_playlist(char *filename, const char *proxy, const char *bas
 {
 	Stream stream;
 	PlsFile pls;
-	PlsEntry *entry;
 	int ret = 0;
 
 	if (filename == NULL) {
-		printf("Error : Couldn't load null file\n");
 		ret = -1;
 		goto early_err;
 	}
 
 	if (!is_pls_extension(filename)) {
-		printf("Error : !is_pls_extension(%s)\n", filename);
 		ret = -1;
 		goto early_err;
 	}
@@ -87,8 +84,8 @@ int load_stream_from_playlist(char *filename, const char *proxy, const char *bas
 		printf("Error : Couldn't load pls file\n");
 		goto early_err;
 	}
-	entry = pls.entries;
-	if ((ret = load_stream(&stream, entry->file, proxy, basefilename, duration)) < 0) {
+
+	if ((ret = load_stream(&stream, pls.entries->file, proxy, basefilename, duration)) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
 		goto err;
 	}

@@ -36,6 +36,8 @@ int read_stream(Stream *stream)
 	curl_easy_setopt(curl, CURLOPT_HEADERDATA, stream);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, parse_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, stream);
+	curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+	curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 60L);
 
 	curl_res = curl_easy_perform(curl);
 	if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {

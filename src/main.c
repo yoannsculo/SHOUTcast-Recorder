@@ -17,7 +17,7 @@
 #include "curl.h"
 #include "log.h"
 
-int load_stream_from_playlist(char *filename, const char *proxy, const char *basefilename, const char *duration);
+int load_stream_from_playlist(char *filename);
 
 void usage(void)
 {
@@ -86,9 +86,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (pflag) {
-		//if ((ret = load_stream_from_playlist(cvalue)) < 0) 
-		if ((ret = load_stream_from_playlist(cvalue, proxy, basefilename, duration)) < 0)
-		{
+		if ((ret = load_stream_from_playlist(cvalue)) < 0) {
 			printf("Couldn't load stream from playlist\n");
 			goto err;
 		}
@@ -147,6 +145,17 @@ size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata)
 		buffer = ((char*)ptr)[i];
 		global_listener(stream, &buffer);
 		stream->bytes_count_total++;
+	}
+
+	write_data(stream); 
+	free(stream->mp3data.buffer);
+	stream->mp3data.size = 0;
+
+	stream->blocks_count++;
+
+	return numbytes;
+}
+am->bytes_count_total++;
 	}
 
 	write_data(stream); 
