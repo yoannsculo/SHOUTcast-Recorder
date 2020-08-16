@@ -6,6 +6,8 @@
 static FILE *fp_log;
 static FILE *fp_prog;
 static char current_time[20];
+static char current_date[20];
+static char tempfile[255];
 
 static int get_time(char *string)
 {
@@ -28,21 +30,42 @@ static int get_time(char *string)
 	return 0;
 }
 
+static int get_date(char *string)
+{
+	time_t rawtime;
+  	struct tm *timeinfo;
+	
+	if (string == NULL)
+		return -1;
+
+    	time (&rawtime);
+      	timeinfo = localtime(&rawtime);
+
+	sprintf(string, "%d%02d%02d", 1900+timeinfo->tm_year, timeinfo->tm_mon+1, timeinfo->tm_mday);
+
+	return 0;
+}
+
 int log_open_files(void)
 {
 	if (fp_log != NULL)
 		return -1;
 
-	fp_log = fopen("shoutr.log","a");
+	if( get_date(current_date) <0) {
+		printf("Couldn't get date");
+		return -1;
+	}
+	snprintf(tempfile,255,"shoutr.%s.log",current_date);
+	fp_log = fopen(tempfile,"a");
 	if (fp_log == NULL) {
 		printf("Couldn't open shoutr.log file\n");
 		return -1;
 	}
 
-	fp_prog = fopen("prog.log","a");
+	snprintf(tempfile,255,"prog.%s.log",current_date);
+	fp_prog = fopen(tempfile,"a");
 	if (fp_prog == NULL) {
 		printf("Couldn't open prog.log file\n");
-		fclose(fp_log);
 		return -1;
 	}
 
@@ -82,7 +105,8 @@ static int log_append(FILE *fp, char *line)
 
 void slog(char *line)
 {
-	log_append(fp_log, line);
+	if (log_append(fp_log, line) < 0)
+		printf("Coudln't write shoutr log\n");
 }
 
 void slog_prog(char *line)

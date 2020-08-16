@@ -48,19 +48,34 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		char metadata_content[500];
 		char stream_title[500];
 		strncpy(metadata_content, metadata->buffer, metadata->size);
-		get_metadata_field(metadata_content, "StreamTitle", stream->stream_title);
-		sprintf(stream_title, "%s\n", stream->stream_title);
-		printf("%s", stream_title);
-		slog_prog(stream_title);
-		stream->metadata_count++;
-
-		{
-			char new_filename[255] = "";
-			fclose(stream->output_stream);
-			sprintf(new_filename, "%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
-			stream->output_stream = fopen(new_filename, "wb");
-
+		get_metadata_field(metadata_content, "StreamTitle", stream_title);
+		stream_title[499]='\0';
+		// filter problematic characters from StreamTitle
+                for (int i =0; i < 499; i++) {
+			if (stream_title[i]=='*')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='?')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='>')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='<')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='\\') { stream_title[i]='_'; continue; }
+			if (stream_title[i]=='|')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='\"') { stream_title[i]='_'; continue; } 
+			if (stream_title[i]==':')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='/')  { stream_title[i]='_'; continue; } 
+			if (stream_title[i]=='\0') { break;} //done
 		}
+		printf("%s\n", stream_title);
+		if (0 != strncmp(stream->stream_title, stream_title, 500))
+		{
+			strncpy(stream->stream_title,stream_title, 500);
+			stream->metadata_count++;
+			char new_filename[255] = "";
+			snprintf(new_filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
+                        new_filename[254]='\0';
+			fclose(stream->output_stream);
+			stream->output_stream = fopen(new_filename, "wb");
+		}
+                snprintf(stream_title,500, "%s\n", stream->stream_title);
+		slog_prog(stream_title);
 
 		stream->bytes_count = 0;
 		stream->status = E_STATUS_MP3DATA;

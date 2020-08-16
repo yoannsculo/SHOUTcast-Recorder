@@ -39,7 +39,8 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	stream->bytes_count_total   = 0;
 	stream->blocks_count        = 0;
 	stream->metadata_count      = 0;
-	stream->stream_title[0]     = '\0';
+	stream->stream_title[0]     = '*';//force create new file
+	stream->stream_title[1]     = '\0';
 
 	stream->status = E_STATUS_HEADER;
 

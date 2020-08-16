@@ -155,14 +155,3 @@ size_t parse_data(void *ptr, size_t size, size_t nmemb, void *userdata)
 
 	return numbytes;
 }
-am->bytes_count_total++;
-	}
-
-	write_data(stream); 
-	free(stream->mp3data.buffer);
-	stream->mp3data.size = 0;
-
-	stream->blocks_count++;
-
-	return numbytes;
-}
