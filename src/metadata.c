@@ -50,6 +50,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		strncpy(metadata_content, metadata->buffer, metadata->size);
 		get_metadata_field(metadata_content, "StreamTitle", stream_title);
 		stream_title[499]='\0';
+		metadata_content[499]='\0';
 		// filter problematic characters from StreamTitle
                 for (int i =0; i < 499; i++) {
 			if (stream_title[i]=='*')  { stream_title[i]='_'; continue; } 
@@ -76,6 +77,10 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		}
                 snprintf(stream_title,500, "%s\n", stream->stream_title);
 		slog_prog(stream_title);
+
+		// slog metadata_content
+                snprintf(stream_title,500, "%s\n", metadata_content);
+		slog(stream_title);
 
 		stream->bytes_count = 0;
 		stream->status = E_STATUS_MP3DATA;

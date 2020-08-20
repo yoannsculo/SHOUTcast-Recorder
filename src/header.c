@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "types.h"
 #include "header.h"
@@ -28,7 +29,7 @@ int header_listener(Stream *stream, char *buffer)
 
 		if (header->metaint == 0) {
 			printf("Error : Couldn't find metaint information\n");
-			exit(-1);
+			header->metaint = INT_MAX;
 		}
 
 		print_header(header);
