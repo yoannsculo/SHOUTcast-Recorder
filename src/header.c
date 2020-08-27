@@ -29,7 +29,6 @@ int header_listener(Stream *stream, char *buffer)
 
 		if (header->metaint == 0) {
 			printf("Error : Couldn't find metaint information\n");
-			header->metaint = INT_MAX;
 		}
 
 		print_header(header);

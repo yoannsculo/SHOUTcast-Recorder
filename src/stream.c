@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "types.h"
 #include "stream.h"
@@ -54,8 +55,12 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	if (proxy != NULL) {
 		success = strncpy(stream->proxy, proxy, 254) != NULL;
 	}
-	
-	success = success && ((strncpy(stream->url, url, 254) != NULL) && (strncpy(stream->basefilename, basefilename, 254) != NULL));
+
+	time_t rawtime;
+	struct tm * timeinfo;
+	time (&rawtime);
+	timeinfo = localtime(&rawtime);
+	success = success && ((strncpy(stream->url, url, 254) != NULL) && (0 != strftime(stream->basefilename,254,basefilename,timeinfo)));
 	if (success)
 	{
 		sprintf(filename, "%s%03d.mp3", stream->basefilename, stream->metadata_count);

@@ -14,12 +14,14 @@ int mp3data_listener(Stream *stream, char *buffer)
 
 	mp3data = &stream->mp3data;
 
+	if (mp3data->ptr == NULL) 
+		return 0;
 	*mp3data->ptr = *buffer;
 	mp3data->size++; 
 	mp3data->ptr++;
 	stream->bytes_count++;
 
-	if (stream->bytes_count == stream->header.metaint)
+	if (stream->header.metaint > 0 && stream->bytes_count == stream->header.metaint)
 		stream->status = E_STATUS_METADATA_HEADER;
 
 	return 0;
