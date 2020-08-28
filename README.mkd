@@ -23,12 +23,19 @@ How does it work ?
 - At the end of each block, we write gathered MP3 data into an external file
 - Now we can enjoy downloaded music :)
 
+How to build it
+---------------
+
+use make to build
+artefact is in build folder
+see Makefile
+
 How to run it
 -------------
 
 Here are two examples :
 
-	./shoutr -u http://88.190.24.47:80 
+	./shoutr -u http://88.190.24.47:80 -f ./%w-%H- -d 3580
 
 or
 
@@ -45,7 +52,19 @@ without these additional commandline options specified
 	no proxy is used (note: libcurl respects the proxy environment variables named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY)
 	basename will be radio###.mp3 (where ### is incrementing number)
 	duration will be infinite (see CURLOPT_TIMEOUT)
-	
+	base name can contain timestamp directives (see strftime)
+	base name will be appended with name of downloaded music using metadata (if available)
+
+cron example :
+
+SHELL=/bin/bash
+log=/HDD/log/crontab.
+dt=date +%Y%m%d
+dow=date +%u
+
+stream=http://88.190.24.47:80
+0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10- -d 3580 >> $log$($dt).log 2>&1
+
 TODO
 ----
 
@@ -56,7 +75,6 @@ Some interesting features to add :
 - add a big shoucast radio list with lots of radios 
 - add shoutr_start and shoutr_stop functions.
 - add id3tags
-- add option to name downloaded music using metadata
 
 LICENSE
 -------
@@ -66,5 +84,4 @@ See the file COPYING for details.
 
 Contact
 -------
-
 Yoann Sculo - <yoann.sculo@gmail.com>
