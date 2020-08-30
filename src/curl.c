@@ -1,5 +1,6 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <time.h>
 
 #include "types.h"
 #include "parsing.h"
@@ -31,7 +32,6 @@ int read_stream(Stream *stream)
 	curl_easy_setopt(curl, CURLOPT_URL, stream->url);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(curl, CURLOPT_PROXY, stream->proxy);
-	curl_easy_setopt(curl, CURLOPT_TIMEOUT, stream->duration);
 	curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
 	curl_easy_setopt(curl, CURLOPT_HEADERDATA, stream);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, parse_data);
@@ -41,11 +41,19 @@ int read_stream(Stream *stream)
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
 
-	curl_res = curl_easy_perform(curl);
-	if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {
-		printf("ERROR %2d: %s\n", curl_res, curl_easy_strerror(curl_res));
-		ret = -1;
-		goto err;
+	time_t start_t, end_t;
+	time(&start_t);
+	uint seconds_elapsed = 0;
+	while(seconds_elapsed <= stream->duration) {
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, stream->duration-seconds_elapsed);
+		curl_res = curl_easy_perform(curl);
+		if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {
+			printf("ERROR %2d: %s\n", curl_res, curl_easy_strerror(curl_res));
+			ret = -1;
+			goto err;
+		}
+		time(&end_t);
+		seconds_elapsed=(uint)difftime(end_t, start_t);
 	}
 
 err:
