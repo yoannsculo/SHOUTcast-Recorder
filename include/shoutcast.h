@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration);
+int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration, const char* repeat);
 void global_listener(Stream *stream, char *buffer);
 int write_data(Stream *stream);
 

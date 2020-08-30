@@ -27,6 +27,7 @@ void usage(void)
 	printf("           -x\t: proxy (default no proxy)\n");
 	printf("           -f\t: basefilename (default radio)\n");
 	printf("           -d\t: recording duration (in seconds, default 0 = unlimited)\n");
+	printf("           -r\t: recording repeats (default 0 = none)\n");
 }
 
 int main(int argc, char *argv[])
@@ -38,11 +39,12 @@ int main(int argc, char *argv[])
 	char *cvalue = NULL;
 	char *proxy = NULL;
 	char *duration = "0";
+	char *repeat = "0";
 	
 	char* basefilename = (char*) malloc(255*sizeof(char));
 	sprintf(basefilename, "radio");
 	
-	while ((c = getopt(argc, argv, "p:u:h:x:f:d:")) != -1) {
+	while ((c = getopt(argc, argv, "p:u:h:x:f:d:r:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -65,6 +67,9 @@ int main(int argc, char *argv[])
 			// duration
 			case 'd':
 				duration = optarg;
+				break;
+			case 'r':
+				repeat = optarg;
 				break;
 			case 'h':
 			default:
@@ -94,7 +99,7 @@ int main(int argc, char *argv[])
 
 	if (uflag) {
 		Stream stream;
-		 load_stream(&stream, cvalue, proxy, basefilename, duration);
+		 load_stream(&stream, cvalue, proxy, basefilename, duration, repeat);
 
 		if ((ret = read_stream(&stream)) < 0) {
 			printf("Error : Couldn't read Shoutcast stream\n");

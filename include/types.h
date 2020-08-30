@@ -51,6 +51,7 @@ typedef struct
 	char proxy[255];		// Network proxy
 	char basefilename[255]; // basefilename of output mp3 file
 	unsigned int duration;  // max recording duration
+	unsigned int repeat;  // max recording repeats
 	FILE *output_stream;    // Output MP3 file
 	char stream_title[500]; // Current title
 

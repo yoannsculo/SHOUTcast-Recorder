@@ -9,7 +9,7 @@
 #include "pls.h"
 #include "curl.h"
 
-int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration)
+int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration, const char* repeat)
 {
 	int success = TRUE;
 	char filename[255] = "";
@@ -40,12 +40,12 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	stream->bytes_count_total   = 0;
 	stream->blocks_count        = 0;
 	stream->metadata_count      = 0;
-	stream->stream_title[0]     = '*';//force create new file
-	stream->stream_title[1]     = '\0';
+	stream->stream_title[0]     = '\0';
 
 	stream->status = E_STATUS_HEADER;
 
 	stream->duration = atoi(duration);
+	stream->repeat = atoi(repeat);
 	
 	memset(stream->proxy, 0, 255);
 	memset(stream->url, 0, 255);
@@ -63,7 +63,7 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	success = success && ((strncpy(stream->url, url, 254) != NULL) && (0 != strftime(stream->basefilename,254,basefilename,timeinfo)));
 	if (success)
 	{
-		sprintf(filename, "%s%03d.mp3", stream->basefilename, stream->metadata_count);
+                snprintf(filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
 		stream->output_stream = fopen(filename, "wb");
 		return 0;
 	}
@@ -91,7 +91,7 @@ int load_stream_from_playlist(char *filename, const char *proxy, const char *bas
 		goto early_err;
 	}
 
-	if ((ret = load_stream(&stream, pls.entries->file, proxy, basefilename, duration)) < 0) {
+	if ((ret = load_stream(&stream, pls.entries->file, proxy, basefilename, duration, "0")) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
 		goto err;
 	}
