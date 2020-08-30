@@ -10,6 +10,9 @@ Dependencies
 ------------
 
 - libcurl
+  sudo apt-get install libcurl-dev
+  sudo apt-get install libcurl4-openssl-dev
+ 
 
 How does it work ?
 ------------------
