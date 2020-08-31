@@ -78,21 +78,21 @@ int read_stream(Stream *stream)
   if (stream->url == NULL) {
     time(&now);
     info = localtime( &now );
-    strftime(buffer,80,"%Y-%m-%d %H:%M:%S Error : stream->url null\n", info);
+    strftime(buffer,80,"%T Error : stream->url null\n", info);
     printf(buffer);
     ret = -1;
     goto early_err;
   }
   time(&now);
   info = localtime( &now );
-  strftime(buffer,80, "%Y-%m-%d %H:%M:%S", info);
+  strftime(buffer,80, "%T", info);
   printf("%s stream->url [%s]\n", buffer, stream->url);
   printf("%s stream->proxy [%s]\n", buffer, stream->proxy);
   printf(buffer);
   if ((curl = curl_easy_init()) == NULL) {
     time(&now);
     info = localtime( &now );
-    strftime(buffer,80,"%Y-%m-%d %H:%M:%S Error : curl_easy_init\n", info);
+    strftime(buffer,80,"%T Error : curl_easy_init\n", info);
     printf(buffer);
     ret = -1;
     goto early_err;
@@ -134,7 +134,7 @@ int read_stream(Stream *stream)
     if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {
       time(&now);
       info = localtime( &now );
-      strftime(buffer,80,"%Y-%m-%d %H:%M:%S", info);
+      strftime(buffer,80,"%T", info);
       printf("%s ERROR %2d: %s\n", buffer, curl_res, curl_easy_strerror(curl_res));
       ret = -1;
       goto err;

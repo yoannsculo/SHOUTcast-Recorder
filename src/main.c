@@ -21,13 +21,12 @@ int load_stream_from_playlist(char *filename);
 
 void usage(void)
 {
-	printf("Usage: shoutr [OPTIONS]\n");
-	printf("       -p\t: playlist file\n");
-	printf("       -u\t: stream url\n");
-	printf("           -x\t: proxy (default no proxy)\n");
-	printf("           -f\t: basefilename (default radio)\n");
-	printf("           -d\t: recording duration (in seconds, default 0 = unlimited)\n");
-	printf("           -r\t: recording repeats (default 0 = none)\n");
+	printf("Usage: shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]\n");
+	printf("options:\n");
+	printf("\t-x\t: proxy (default no proxy)\n");
+	printf("\t-f\t: basefilename (default radio)\n");
+	printf("\t-d\t: recording duration (in seconds, default 0 = unlimited)\n");
+	printf("\t-r\t: recording repeats (default 0 = none)\n");
 }
 
 int main(int argc, char *argv[])
