@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 
 #include "types.h"
 #include "metadata.h"
 #include "icy-string.h"
+#include <taglib/tag_c.h>
 
 #include "log.h"
 
@@ -45,9 +47,9 @@ int metadata_body_handler(Stream *stream, char *buffer)
 	MetaData *metadata = &stream->metadata;
 	*metadata->ptr = *buffer;
 	if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
-		char metadata_content[500];
-		char stream_title[500];
-		strncpy(metadata_content, metadata->buffer, metadata->size);
+		char metadata_content[500]="";
+		char stream_title[500]="";
+		strncpy(metadata_content, metadata->buffer, MIN(metadata->size,500));
 		get_metadata_field(metadata_content, "StreamTitle", stream_title);
 		stream_title[499]='\0';
 		metadata_content[499]='\0';
@@ -64,16 +66,30 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			if (stream_title[i]=='/')  { stream_title[i]='_'; continue; } 
 			if (stream_title[i]=='\0') { break;} //done
 		}
-		printf("%s\n", stream_title);
+		printf("stream_title: %s\n", stream_title);
 		if (0 != strncmp(stream->stream_title, stream_title, 500))
 		{
-			strncpy(stream->stream_title,stream_title, 500);
 			stream->metadata_count++;
 			char new_filename[255] = "";
-			snprintf(new_filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
+			snprintf(new_filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream_title);
                         new_filename[254]='\0';
 			fclose(stream->output_stream);
 			stream->output_stream = fopen(new_filename, "wb");
+
+			taglib_set_strings_unicode(FALSE);
+			TagLib_File *media_file = taglib_file_new(stream->filename);
+			if (media_file != NULL) {
+				TagLib_Tag *tag = taglib_file_tag(media_file);
+				if (tag != NULL) {
+					taglib_tag_set_comment(tag, stream->stream_title);
+					taglib_file_save(media_file);
+				}
+				taglib_tag_free_strings();
+				taglib_file_free(media_file);
+			}
+
+			strncpy(stream->filename,new_filename, 254);
+			strncpy(stream->stream_title,stream_title, 500);
 		}
                 snprintf(stream_title,500, "%s\n", stream->stream_title);
 		slog_prog(stream_title);

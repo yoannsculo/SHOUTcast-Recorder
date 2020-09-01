@@ -26,7 +26,6 @@ struct myprogress {
 void SwapOfs(void *p) {
   struct myprogress *myp = (struct myprogress *)p;
   CURL *curl = myp->curl;
-//  char filename[255] = "";
   long duration = myp->duration;
   Stream *stream = myp->stream;
 #ifdef TIME_IN_US
@@ -45,6 +44,7 @@ void SwapOfs(void *p) {
     new_filename[254]='\0';
     fclose(stream->output_stream);
     stream->output_stream = fopen(new_filename, "wb");
+    strncpy(stream->filename, new_filename, 254);
   }
 }
 

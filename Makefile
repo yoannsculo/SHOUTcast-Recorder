@@ -8,7 +8,7 @@ INCLUDES   = -Iinclude \
 			 -I/usr/include
 
 CFLAGS	   = -W -Wall -g
-LDFLAGS	   = -L/usr/lib -lcurl
+LDFLAGS	   = -L/usr/lib -lcurl -L/usr/lib/arm-linux-gnueabihf/libtag.so -L/usr/lib/arm-linux-gnueabihf/libtag_c.so -ltag_c
 
 all: prepare $(EXEC)
 

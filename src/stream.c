@@ -41,6 +41,7 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	stream->blocks_count        = 0;
 	stream->metadata_count      = 0;
 	stream->stream_title[0]     = '\0';
+	stream->output_stream       = NULL;
 
 	stream->status = E_STATUS_HEADER;
 
@@ -51,6 +52,7 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	memset(stream->url, 0, 255);
 	memset(stream->basefilename, 0, 255);
 	memset(filename, 0, 255);
+	memset(stream->filename, 0, 255);
 	
 	if (proxy != NULL) {
 		success = strncpy(stream->proxy, proxy, 254) != NULL;
@@ -64,6 +66,8 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	if (success)
 	{
                 snprintf(filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
+		filename[254]='\0';
+		strncpy(stream->filename, filename, 254);
 		stream->output_stream = fopen(filename, "wb");
 		return 0;
 	}

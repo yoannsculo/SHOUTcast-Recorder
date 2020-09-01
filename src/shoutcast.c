@@ -23,6 +23,9 @@ void global_listener(Stream *stream, char *buffer)
 
 int write_data(Stream *stream)
 {
+	if (stream->output_stream == NULL) {
+		return 0;
+	}
 	int written = fwrite(stream->mp3data.buffer, sizeof(char),
 			stream->mp3data.size,
 			(FILE *)stream->output_stream);

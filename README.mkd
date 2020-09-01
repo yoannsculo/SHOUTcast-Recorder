@@ -12,6 +12,9 @@ Dependencies
 - libcurl
   sudo apt-get install libcurl-dev
   sudo apt-get install libcurl4-openssl-dev
+- taglib
+  sudo apt-get install libtag1-dev
+  sudo apt-get install libtagc0-dev
  
 
 How does it work ?
@@ -124,9 +127,8 @@ TODO
 
 Some interesting features to add :
 
-- add id3tags (taglib)
-
-- for a big shoucast radio list with lots of radios see www.radio-browser.info
+- more id3tags (taglib) (artist and title depends on station)
+- see www.radio-browser.info for a big shoucast radio list 
 
 
 LICENSE
