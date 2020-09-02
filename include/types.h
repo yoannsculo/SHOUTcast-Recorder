@@ -55,7 +55,7 @@ typedef struct
 	unsigned int repeat;  // max recording repeats
 	FILE *output_stream;    // Output MP3 file
 	char stream_title[500]; // Current title
-
+	int TA; // title = <Title> - <Artist> else <Artist> - <Title>
 	parsing_status status; 
 
 	ICYHeader header;   // Stream header (won't change after being set)

@@ -27,6 +27,7 @@ void usage(void)
 	printf("\t-f\t: basefilename (default radio)\n");
 	printf("\t-d\t: recording duration (in seconds, default 0 = unlimited)\n");
 	printf("\t-r\t: recording repeats (default 0 = none)\n");
+	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
 }
 
 int main(int argc, char *argv[])
@@ -39,11 +40,12 @@ int main(int argc, char *argv[])
 	char *proxy = NULL;
 	char *duration = "0";
 	char *repeat = "0";
+	char *ta = "0";
 	
 	char* basefilename = (char*) malloc(255*sizeof(char));
 	sprintf(basefilename, "radio");
 	
-	while ((c = getopt(argc, argv, "p:u:h:x:f:d:r:")) != -1) {
+	while ((c = getopt(argc, argv, "p:u:h:x:f:d:r:i:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -69,6 +71,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'r':
 				repeat = optarg;
+				break;
+			case 'i':
+				ta = optarg;
 				break;
 			case 'h':
 			default:
@@ -98,6 +103,7 @@ int main(int argc, char *argv[])
 
 	if (uflag) {
 		Stream stream;
+		stream.TA=atoi(ta);
 		 load_stream(&stream, cvalue, proxy, basefilename, duration, repeat);
 
 		if ((ret = read_stream(&stream)) < 0) {

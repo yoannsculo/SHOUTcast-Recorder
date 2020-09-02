@@ -82,6 +82,24 @@ int metadata_body_handler(Stream *stream, char *buffer)
 				TagLib_Tag *tag = taglib_file_tag(media_file);
 				if (tag != NULL) {
 					taglib_tag_set_comment(tag, stream->stream_title);
+					char* token=strtok(stream->stream_title,"-");
+					if (stream->TA == 0) {
+						if (token) {
+							taglib_tag_set_title(tag,token);
+							token=strtok(NULL,"-");
+						}
+						if (token) {
+							taglib_tag_set_artist(tag,token);
+						}
+					} else {
+						if (token) {
+							taglib_tag_set_artist(tag,token);
+							token=strtok(NULL,"-");
+						}
+						if (token) {
+							taglib_tag_set_title(tag,token);
+						}
+					}
 					taglib_file_save(media_file);
 				}
 				taglib_tag_free_strings();
