@@ -41,7 +41,7 @@ How to run it
 
 Here are two examples :
 
-	./shoutr -u http://88.190.24.47:80 -f ./%w-%H- -d 3580
+	./shoutr -u http://88.190.24.47:80 -f ./%w-%H -d 3580
 
 or
 
@@ -53,6 +53,7 @@ Additional commandline options
 	-f hotmusic	defines the base name of the mp3 file(s) created
 	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
 	-r repeat	repeat the recording specified number of times
+        -i id3tags      split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
 	
 without these additional commandline options specified
 
@@ -78,10 +79,10 @@ without these additional commandline options specified
           not change basename (weekday nor Hour nor any supplied timestamp directive)
        N.B. a repeat set to 2 will produce 3 recordings (0, 1=1st repeat, 2=2nd repeat)
           (of the same stream and of the same duration)
+    non-empty stream_title will be used for id3tag assuming artist - title
 
 
 cron example :
-
 `
 SHELL=/bin/bash
 log=/HDD/log/crontab.
@@ -89,7 +90,7 @@ dt=date +%Y%m%d
 dow=date +%u
 
 stream=http://88.190.24.47:80
-0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10- -d 3580 -r 1 >> $log$($dt).log 2>&1
+0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
 `
 
 copy recordings in recording order :

@@ -65,7 +65,11 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	success = success && ((strncpy(stream->url, url, 254) != NULL) && (0 != strftime(stream->basefilename,254,basefilename,timeinfo)));
 	if (success)
 	{
-                snprintf(filename,255,"%s%03d-%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
+                if (strlen(stream->stream_title)==0){
+                        snprintf(filename,255,"%s.%03d.mp3", stream->basefilename, stream->metadata_count);
+                } else {
+                        snprintf(filename,255,"%s.%03d.%s.mp3", stream->basefilename, stream->metadata_count, stream->stream_title);
+                }
 		filename[254]='\0';
 		strncpy(stream->filename, filename, 254);
 		stream->output_stream = fopen(filename, "wb");
