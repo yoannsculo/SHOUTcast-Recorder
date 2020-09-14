@@ -17,7 +17,7 @@
 #include "curl.h"
 #include "log.h"
 
-int load_stream_from_playlist(char *filename);
+int load_stream_from_playlist(Stream *stream, char *filename, const char *proxy, const char *basefilename, const char *duration, const char *repeat);
 
 void usage(void)
 {
@@ -94,25 +94,25 @@ int main(int argc, char *argv[])
 		goto err_early;
 	}
 
+	Stream stream;
+	stream.TA=atoi(ta);
+
 	if (pflag) {
-		if ((ret = load_stream_from_playlist(cvalue)) < 0) {
+		if ((ret = load_stream_from_playlist(&stream, cvalue, proxy, basefilename, duration, repeat)) < 0) {
 			printf("Couldn't load stream from playlist\n");
 			goto err;
 		}
 	}
 
 	if (uflag) {
-		Stream stream;
-		stream.TA=atoi(ta);
-		 load_stream(&stream, cvalue, proxy, basefilename, duration, repeat);
+		load_stream(&stream, cvalue, proxy, basefilename, duration, repeat);
 
-		if ((ret = read_stream(&stream)) < 0) {
-			printf("Error : Couldn't read Shoutcast stream\n");
-			goto err;
-		}
 	}
 
-	// res = load_stream(&stream, "http://88.190.24.47:80");
+	if ((ret = read_stream(&stream)) < 0) {
+		printf("Error : Couldn't read Shoutcast stream\n");
+		goto err;
+	}
 err:
 	log_close_files();
 err_early:

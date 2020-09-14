@@ -76,7 +76,7 @@ static int pls_get_field(char *buffer, char *value)
 
 	ptr_begin = strstr(buffer, "=")+1;
 	ptr_end = strstr(buffer, "\n")-1; 
-	strncpy(value, ptr_begin, (int)(ptr_end - ptr_begin));
+	strncpy(value, ptr_begin, (int)(ptr_end - ptr_begin + 1));
 
 	return 0;
 }
@@ -88,13 +88,14 @@ static int pls_get_entries(FILE *fp, PlsFile *pls)
 	PlsEntry *entry = pls->entries;
 
 	fseek(fp, 0 ,SEEK_SET);
-	fgets(buffer, MAX_LINE_LENGTH, fp);
 
-	for (i=0;i<pls->number_entries;i++) {
+	i=0;
+	while (i<pls->number_entries) {
 		fgets(buffer, MAX_LINE_LENGTH, fp);
 		if (strstr(buffer, "File") != NULL) {
 			pls_get_field(buffer, entry->file);
 			entry++;
+			i++;
 		}
 	}
 	return 0; // TODO : use a better return value 

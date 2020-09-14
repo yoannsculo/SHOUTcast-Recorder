@@ -73,9 +73,8 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 	return 1;
 }
 
-int load_stream_from_playlist(char *filename, const char *proxy, const char *basefilename, const char *duration)
+int load_stream_from_playlist(Stream *stream, char *filename, const char *proxy, const char *basefilename, const char *duration, const char *repeat)
 {
-	Stream stream;
 	PlsFile pls;
 	int ret = 0;
 
@@ -94,13 +93,8 @@ int load_stream_from_playlist(char *filename, const char *proxy, const char *bas
 		goto early_err;
 	}
 
-	if ((ret = load_stream(&stream, pls.entries->file, proxy, basefilename, duration, "0")) < 0) {
+	if ((ret = load_stream(stream, pls.entries->file, proxy, basefilename, duration, repeat)) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
-		goto err;
-	}
-
-	if ((ret = read_stream(&stream)) < 0) {
-		printf("Error : Couldn't read Shoutcast stream\n");
 		goto err;
 	}
 
