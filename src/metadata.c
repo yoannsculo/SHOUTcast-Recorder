@@ -71,12 +71,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		{
 			stream->metadata_count++;
 			char new_filename[255] = "";
-			if (strlen(stream_title)==0){
-				snprintf(new_filename,255,"%s.%03d.mp3", stream->basefilename, stream->metadata_count);
-			} else {
-				snprintf(new_filename,255,"%s.%03d.%s.mp3", stream->basefilename, stream->metadata_count, stream_title);
-			}
-                        new_filename[254]='\0';
+			newfilename(stream, new_filename, 255, stream_title);
 			fclose(stream->output_stream);
 			stream->output_stream = fopen(new_filename, "wb");
 
@@ -113,9 +108,6 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			strncpy(stream->filename,new_filename, 254);
 			strncpy(stream->stream_title,stream_title, 500);
 		}
-                snprintf(stream_title,500, "%s\n", stream->stream_title);
-		slog_prog(stream_title);
-
 		// slog metadata_content
                 snprintf(stream_title,500, "%s\n", metadata_content);
 		slog(stream_title);

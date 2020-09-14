@@ -4,7 +4,6 @@
 #include "log.h"
 
 static FILE *fp_log;
-static FILE *fp_prog;
 static char current_time[20];
 static char current_date[20];
 static char tempfile[255];
@@ -62,22 +61,12 @@ int log_open_files(void)
 		return -1;
 	}
 
-	snprintf(tempfile,255,"prog.%s.log",current_date);
-	fp_prog = fopen(tempfile,"a");
-	if (fp_prog == NULL) {
-		printf("Couldn't open prog.log file\n");
-		return -1;
-	}
-
 	return 0;
 }
 
 int log_close_files(void)
 {
 	if (fclose(fp_log) == EOF)
-		return EOF;
-
-	if (fclose(fp_prog) == EOF)
 		return EOF;
 
 	return 0;
@@ -109,8 +98,3 @@ void slog(char *line)
 		printf("Coudln't write shoutr log\n");
 }
 
-void slog_prog(char *line)
-{
-	if (log_append(fp_prog, line) < 0)
-		printf("Coudln't write prog log\n");
-}
