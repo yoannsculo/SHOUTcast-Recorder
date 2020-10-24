@@ -41,6 +41,12 @@ int metadata_header_handler(Stream *stream, char *buffer)
 	return 0;
 }
 
+void removechar( char str[], unsigned int i )
+{
+    for (unsigned int j=i; j<strlen(str)-2; j++)
+         str[j]=str[j+1];
+    str[strlen(str)-1]='\0';
+}
 
 int metadata_body_handler(Stream *stream, char *buffer)
 {
@@ -54,7 +60,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		stream_title[499]='\0';
 		metadata_content[499]='\0';
 		// filter problematic characters from StreamTitle
-                for (int i =0; i < 499; i++) {
+                for (unsigned int i =0; i < 496; i++) {
 			if (stream_title[i]=='*')  { stream_title[i]='_'; continue; } 
 			if (stream_title[i]=='?')  { stream_title[i]='_'; continue; } 
 			if (stream_title[i]=='>')  { stream_title[i]='_'; continue; } 
@@ -64,6 +70,33 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			if (stream_title[i]=='\"') { stream_title[i]='_'; continue; } 
 			if (stream_title[i]==':')  { stream_title[i]='_'; continue; } 
 			if (stream_title[i]=='/')  { stream_title[i]='_'; continue; } 
+			if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0x8B)) { //Ë E9 B
+				stream_title[i]=0xD3;
+				removechar(stream_title,i+1);
+				continue;
+			} else {
+				if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0xA1)) { // á
+					stream_title[i]=0xE1;
+					removechar(stream_title,i+1);
+					continue;
+				} else {
+					if (stream_title[i]==0xE9) { // é
+						stream_title[i]=0xE9;
+						continue;
+					}
+				}
+			}
+			if ( 	(stream_title[i]==0xC3)&&
+				(stream_title[i+1]==0x83)&&
+				(stream_title[i+2]==0x83)&&
+				(stream_title[i+3]==0xC2))
+			{
+				stream_title[i]=0xE9; //é C3 83 C2 A9
+				removechar(stream_title,i+1);
+				removechar(stream_title,i+2);
+				removechar(stream_title,i+3);
+				continue;
+			}
 			if (stream_title[i]=='\0') { break;} //done
 		}
 		printf("stream_title: %s\n", stream_title);
