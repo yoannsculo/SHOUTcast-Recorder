@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -17,7 +18,7 @@
 #include "curl.h"
 #include "log.h"
 
-int load_stream_from_playlist(Stream *stream, char *filename, const char *proxy, const char *basefilename, const char *duration, const char *repeat);
+int load_stream_from_playlist(Stream *stream, char *filename);
 
 void usage(void)
 {
@@ -104,17 +105,30 @@ int main(int argc, char *argv[])
 
 	Stream stream;
 	stream.TA=atoi(ta);
+
+	time_t rawtime;
+        struct tm * timeinfo;
+        time (&rawtime);
+        timeinfo = localtime(&rawtime);
+	strftime(stream.basefilename,254,basefilename,timeinfo);
+
         snprintf(stream.ext, 255, "%s", fileext);
+        stream.duration=atoi(duration);
+        stream.repeat=atoi(repeat);
+	memset(stream.proxy, 0, 255);
+        if (proxy != NULL) {
+		strncpy(stream.proxy, proxy, 254);
+	}
 
 	if (pflag) {
-		if ((ret = load_stream_from_playlist(&stream, cvalue, proxy, basefilename, duration, repeat)) < 0) {
+		if ((ret = load_stream_from_playlist(&stream, cvalue)) < 0) {
 			printf("Couldn't load stream from playlist\n");
 			goto err;
 		}
 	}
 
 	if (uflag) {
-		load_stream(&stream, cvalue, proxy, basefilename, duration, repeat);
+		load_stream(&stream, cvalue);
 
 	}
 

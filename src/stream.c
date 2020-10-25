@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include "types.h"
 #include "stream.h"
@@ -9,9 +8,8 @@
 #include "pls.h"
 #include "curl.h"
 
-int load_stream(Stream *stream, const char *url, const char *proxy, const char *basefilename, const char* duration, const char* repeat)
+int load_stream(Stream *stream, const char *url)
 {
-	int success = TRUE;
 	char filename[255] = "";
 
 	ICYHeader *header = &stream->header;
@@ -45,35 +43,18 @@ int load_stream(Stream *stream, const char *url, const char *proxy, const char *
 
 	stream->status = E_STATUS_HEADER;
 
-	stream->duration = atoi(duration);
-	stream->repeat = atoi(repeat);
-	
-	memset(stream->proxy, 0, 255);
 	memset(stream->url, 0, 255);
-	memset(stream->basefilename, 0, 255);
+	strncpy(stream->url, url, 254);
 	memset(filename, 0, 255);
 	memset(stream->filename, 0, 255);
 	
-	if (proxy != NULL) {
-		success = strncpy(stream->proxy, proxy, 254) != NULL;
-	}
-
-	time_t rawtime;
-	struct tm * timeinfo;
-	time (&rawtime);
-	timeinfo = localtime(&rawtime);
-	success = success && ((strncpy(stream->url, url, 254) != NULL) && (0 != strftime(stream->basefilename,254,basefilename,timeinfo)));
-	if (success)
-	{
-		newfilename(stream, filename, 255, stream->stream_title);
-		strncpy(stream->filename, filename, 254);
-		stream->output_stream = fopen(filename, "wb");
-		return 0;
-	}
-	return 1;
+	newfilename(stream, filename, 255, stream->stream_title);
+	strncpy(stream->filename, filename, 254);
+	stream->output_stream = fopen(filename, "wb");
+	return 0;
 }
 
-int load_stream_from_playlist(Stream *stream, char *filename, const char *proxy, const char *basefilename, const char *duration, const char *repeat)
+int load_stream_from_playlist(Stream *stream, char *filename)
 {
 	PlsFile pls;
 	int ret = 0;
@@ -93,7 +74,7 @@ int load_stream_from_playlist(Stream *stream, char *filename, const char *proxy,
 		goto early_err;
 	}
 
-	if ((ret = load_stream(stream, pls.entries->file, proxy, basefilename, duration, repeat)) < 0) {
+	if ((ret = load_stream(stream, pls.entries->file)) < 0) {
 		printf("Error : Couldn't load Shoutcast stream\n");
 		goto err;
 	}
