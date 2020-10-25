@@ -108,9 +108,9 @@ early_err:
 void newfilename(const Stream *stream, char* filename, unsigned int size, char* title)
 {
  if (strlen(title)==0) {
-  snprintf(filename,size,"%s.%03d.mp3", stream->basefilename, stream->metadata_count);
+  snprintf(filename,size,"%s.%03d.%s", stream->basefilename, stream->metadata_count, stream->ext);
  } else {
-  snprintf(filename,size,"%s.%03d.%s.mp3", stream->basefilename, stream->metadata_count, title);
+  snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
  filename[size-1]='\0';
 }

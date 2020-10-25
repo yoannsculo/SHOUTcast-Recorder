@@ -142,7 +142,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			strncpy(stream->stream_title,stream_title, 500);
 		}
 		// slog metadata_content
-                snprintf(stream_title,500, "%s\n", metadata_content);
+                snprintf(stream_title, 501, "%s\n", metadata_content);
 		slog(stream_title);
 
 		stream->bytes_count = 0;

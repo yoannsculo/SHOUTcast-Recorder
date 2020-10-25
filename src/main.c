@@ -23,11 +23,12 @@ void usage(void)
 {
 	printf("Usage: shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]\n");
 	printf("options:\n");
-	printf("\t-x\t: proxy (default no proxy)\n");
-	printf("\t-f\t: basefilename (default radio)\n");
 	printf("\t-d\t: recording duration (in seconds, default 0 = unlimited)\n");
-	printf("\t-r\t: recording repeats (default 0 = none)\n");
+	printf("\t-e\t: fileextension (default mp3)\n");
+	printf("\t-f\t: basefilename (default radio)\n");
 	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
+	printf("\t-r\t: recording repeats (default 0 = none)\n");
+	printf("\t-x\t: proxy (default no proxy)\n");
 }
 
 int main(int argc, char *argv[])
@@ -45,7 +46,10 @@ int main(int argc, char *argv[])
 	char* basefilename = (char*) malloc(255*sizeof(char));
 	sprintf(basefilename, "radio");
 	
-	while ((c = getopt(argc, argv, "p:u:h:x:f:d:r:i:")) != -1) {
+	char* fileext = (char*) malloc(255*sizeof(char));
+	sprintf(fileext, "mp3");
+
+	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -60,6 +64,10 @@ int main(int argc, char *argv[])
 			// proxy
 			case 'x':
 				proxy = optarg;
+				break;
+			// fileextension
+			case 'e':
+				fileext = optarg;
 				break;
 			// basefilename
 			case 'f':
@@ -96,6 +104,7 @@ int main(int argc, char *argv[])
 
 	Stream stream;
 	stream.TA=atoi(ta);
+        snprintf(stream.ext, 255, "%s", fileext);
 
 	if (pflag) {
 		if ((ret = load_stream_from_playlist(&stream, cvalue, proxy, basefilename, duration, repeat)) < 0) {

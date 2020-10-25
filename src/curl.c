@@ -9,17 +9,17 @@
 #define TIME_IN_US 1
 #define TIMETYPE curl_off_t
 #define TIMEOPT CURLINFO_TOTAL_TIME_T
-#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3000000
+#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     1000000
 #else
 #define TIMETYPE double
 #define TIMEOPT CURLINFO_TOTAL_TIME
-#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3
+#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     1
 #endif
 
 struct myprogress {
   TIMETYPE lastruntime; /* type depends on version, see above */
   CURL *curl;
-  long duration;
+  TIMETYPE duration;
   Stream *stream;
   void (*thread) (void *);
 };
@@ -27,17 +27,15 @@ struct myprogress {
 void SwapOfs(void *p) {
   struct myprogress *myp = (struct myprogress *)p;
   CURL *curl = myp->curl;
-  long duration = myp->duration;
+  TIMETYPE duration = myp->duration;
   Stream *stream = myp->stream;
-#ifdef TIME_IN_US
-    duration*=1000000;
-#endif
+  duration*=MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL;
   TIMETYPE curtime = 0;
   curl_easy_getinfo(curl, TIMEOPT, &curtime);
   /* under certain circumstances it may be desirable for certain functionality
      to only run every N seconds, in order to do this the transaction time can
      be used */
-  if((curtime - myp->lastruntime) >= duration) {
+  if(duration > 0 && (curtime - myp->lastruntime) >= duration) {
     myp->lastruntime = curtime;
     stream->metadata_count++;
     char new_filename[255] = "";
@@ -97,6 +95,7 @@ int read_stream(Stream *stream)
     ret = -1;
     goto early_err;
   }
+  printf(" %x\n", LIBCURL_VERSION_NUM);
   prog.curl = curl;
   prog.stream = stream;
   prog.thread = &SwapOfs;
