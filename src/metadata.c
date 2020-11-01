@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <sys/param.h>
 
@@ -99,9 +101,22 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			}
 			if (stream_title[i]=='\0') { break;} //done
 		}
-		printf("stream_title: %s\n", stream_title);
+
+struct timeval curTime;
+gettimeofday(&curTime, NULL);
+int milli = curTime.tv_usec / 1000;
+
+char buffr [80];
+strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+
+char currentTime[84] = "";
+sprintf(currentTime, "%s.%03d", buffr, milli);
+
+		printf("%s stream_title: %s\n", currentTime, stream_title);
 		if (0 != strncmp(stream->stream_title, stream_title, 500))
 		{
+			char ext[3];
+			strncpy(ext, stream->ext, 3);
 			stream->metadata_count++;
 			char new_filename[255] = "";
 			newfilename(stream, new_filename, 255, stream_title);
@@ -109,10 +124,19 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			stream->output_stream = fopen(new_filename, "wb");
 
 			taglib_set_strings_unicode(FALSE);
-			TagLib_File *media_file = taglib_file_new(stream->filename);
-			if (media_file != NULL) {
+			TagLib_File *media_file;
+
+			if (strncmp(ext,"aac",3) == 0)
+			{
+				media_file = taglib_file_new_type(stream->filename, TagLib_File_MP4);
+			} else {
+				media_file = taglib_file_new(stream->filename);
+			}
+			if (media_file != NULL)
+			{
 				TagLib_Tag *tag = taglib_file_tag(media_file);
-				if (tag != NULL) {
+				if (tag != NULL)
+				{
 					taglib_tag_set_comment(tag, stream->stream_title);
 					char* token=strtok(stream->stream_title,"-");
 					if (stream->TA == 0) {
@@ -137,7 +161,6 @@ int metadata_body_handler(Stream *stream, char *buffer)
 				taglib_tag_free_strings();
 				taglib_file_free(media_file);
 			}
-
 			strncpy(stream->filename,new_filename, 254);
 			strncpy(stream->stream_title,stream_title, 500);
 		}

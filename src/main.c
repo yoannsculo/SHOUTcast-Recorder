@@ -112,9 +112,12 @@ int main(int argc, char *argv[])
         timeinfo = localtime(&rawtime);
 	strftime(stream.basefilename,254,basefilename,timeinfo);
 
-        snprintf(stream.ext, 255, "%s", fileext);
+	memset(stream.ext, 0, 255);
+	strncpy(stream.ext, fileext, 254);
+
         stream.duration=atoi(duration);
         stream.repeat=atoi(repeat);
+
 	memset(stream.proxy, 0, 255);
         if (proxy != NULL) {
 		strncpy(stream.proxy, proxy, 254);
