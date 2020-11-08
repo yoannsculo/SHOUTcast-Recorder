@@ -34,12 +34,6 @@ int header_listener(Stream *stream, char *buffer)
 		}
 
 		// TODO init_for_mp3data(stream) ? 
-		stream->blocks_count        = 0;
-		stream->metadata_count      = 0;
-		stream->stream_title[0]     = '\0';
-		stream->output_stream       = NULL;
-		stream->filename[0]         = '\0';
-
 		stream->bytes_count  = 0;
 		stream->bytes_count_total = 0; // TODO : Commenter
 		stream->mp3data.size = 0;

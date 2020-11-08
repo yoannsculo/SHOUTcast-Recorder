@@ -90,7 +90,6 @@ void newfilename(Stream *stream, const char* title)
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
  filename[254]='\0';
- printf("filename %s\n", filename);
  if (stream->output_stream != NULL) fclose(stream->output_stream);
  stream->output_stream = fopen(filename, "wb");
  strncpy(stream->filename, filename, 255);

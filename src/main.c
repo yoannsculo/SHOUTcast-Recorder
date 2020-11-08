@@ -142,6 +142,8 @@ int main(int argc, char *argv[])
 err:
 	log_close_files();
 err_early:
+	free(basefilename);
+	free(fileext);
 	return ret;
 }
 
