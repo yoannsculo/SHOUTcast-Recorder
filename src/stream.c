@@ -10,8 +10,6 @@
 
 int load_stream(Stream *stream, const char *url)
 {
-	char filename[255] = "";
-
 	ICYHeader *header = &stream->header;
 	MetaData *metadata = &stream->metadata;
 	Mp3Data *mp3data = &stream->mp3data;
@@ -40,17 +38,13 @@ int load_stream(Stream *stream, const char *url)
 	stream->metadata_count      = 0;
 	stream->stream_title[0]     = '\0';
 	stream->output_stream       = NULL;
+        stream->filename[0]         = '\0';
 
 	stream->status = E_STATUS_HEADER;
 
-	memset(stream->url, 0, 255);
-	strncpy(stream->url, url, 254);
-	memset(filename, 0, 255);
-	memset(stream->filename, 0, 255);
+	strncpy(stream->url, url, 255);
 	
-	newfilename(stream, filename, 255, stream->stream_title);
-	strncpy(stream->filename, filename, 254);
-	stream->output_stream = fopen(filename, "wb");
+	newfilename(stream, stream->stream_title);
 	return 0;
 }
 
@@ -86,13 +80,25 @@ early_err:
 
 }
 
-void newfilename(const Stream *stream, char* filename, unsigned int size, char* title)
+void newfilename(Stream *stream, const char* title)
 {
- if (strlen(title)==0) {
+ const int size=255+1+3+1+500+1+255;
+ char filename[size];
+ if (title==NULL||strlen(title)==0) {
   snprintf(filename,size,"%s.%03d.%s", stream->basefilename, stream->metadata_count, stream->ext);
  } else {
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
- filename[size-1]='\0';
+ filename[254]='\0';
+ printf("filename %s\n", filename);
+ if (stream->output_stream != NULL) fclose(stream->output_stream);
+ stream->output_stream = fopen(filename, "wb");
+ strncpy(stream->filename, filename, 255);
+ if (title==NULL||strlen(title)==0) {
+   stream->stream_title[0]='\0';
+ } else {
+   strncpy(stream->stream_title, title, 500);
+ }
+ stream->metadata_count++;
 }
 

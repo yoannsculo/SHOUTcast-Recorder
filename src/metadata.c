@@ -58,115 +58,115 @@ int metadata_body_handler(Stream *stream, char *buffer)
 		char metadata_content[500]="";
 		char stream_title[500]="";
 		strncpy(metadata_content, metadata->buffer, MIN(metadata->size,500));
-		get_metadata_field(metadata_content, "StreamTitle", stream_title);
-		stream_title[499]='\0';
-		metadata_content[499]='\0';
-		// filter problematic characters from StreamTitle
-                for (unsigned int i =0; i < 496; i++) {
-			if (stream_title[i]=='*')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='?')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='>')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='<')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='\\') { stream_title[i]='_'; continue; }
-			if (stream_title[i]=='|')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='\"') { stream_title[i]='_'; continue; } 
-			if (stream_title[i]==':')  { stream_title[i]='_'; continue; } 
-			if (stream_title[i]=='/')  { stream_title[i]='_'; continue; } 
-			if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0x8B)) { //Ë E9 B
-				stream_title[i]=0xD3;
-				removechar(stream_title,i+1);
-				continue;
-			} else {
-				if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0xA1)) { // á
-					stream_title[i]=0xE1;
+		if(0==get_metadata_field(metadata_content, "StreamTitle", stream_title))
+		{
+			stream_title[499]='\0';
+			metadata_content[499]='\0';
+			// filter problematic characters from StreamTitle
+	                for (unsigned int i =0; i < MIN(metadata->size,496); i++) {
+				if (stream_title[i]=='\0') { break;} //done
+				if (stream_title[i]=='*')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='?')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='>')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='<')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='\\') { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='|')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='\"') { stream_title[i]='_'; continue; }
+				if (stream_title[i]==':')  { stream_title[i]='_'; continue; }
+				if (stream_title[i]=='/')  { stream_title[i]='_'; continue; }
+				if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0x8B)) { //Ë E9 B
+					stream_title[i]=0xD3;
 					removechar(stream_title,i+1);
 					continue;
 				} else {
-					if (stream_title[i]==0xE9) { // é
-						stream_title[i]=0xE9;
+					if ((stream_title[i]==0xE9)&&(stream_title[i+1]==0xA1)) { // á
+						stream_title[i]=0xE1;
+						removechar(stream_title,i+1);
 						continue;
-					}
-				}
-			}
-			if ( 	(stream_title[i]==0xC3)&&
-				(stream_title[i+1]==0x83)&&
-				(stream_title[i+2]==0x83)&&
-				(stream_title[i+3]==0xC2))
-			{
-				stream_title[i]=0xE9; //é C3 83 C2 A9
-				removechar(stream_title,i+1);
-				removechar(stream_title,i+2);
-				removechar(stream_title,i+3);
-				continue;
-			}
-			if (stream_title[i]=='\0') { break;} //done
-		}
-
-struct timeval curTime;
-gettimeofday(&curTime, NULL);
-int milli = curTime.tv_usec / 1000;
-
-char buffr [80];
-strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
-
-char currentTime[84] = "";
-sprintf(currentTime, "%s.%03d", buffr, milli);
-
-		printf("%s stream_title: %s\n", currentTime, stream_title);
-		if (0 != strncmp(stream->stream_title, stream_title, 500))
-		{
-			char ext[3];
-			strncpy(ext, stream->ext, 3);
-			stream->metadata_count++;
-			char new_filename[255] = "";
-			newfilename(stream, new_filename, 255, stream_title);
-			fclose(stream->output_stream);
-			stream->output_stream = fopen(new_filename, "wb");
-
-			taglib_set_strings_unicode(FALSE);
-			TagLib_File *media_file;
-
-			if (strncmp(ext,"aac",3) == 0)
-			{
-				media_file = taglib_file_new_type(stream->filename, TagLib_File_MP4);
-			} else {
-				media_file = taglib_file_new(stream->filename);
-			}
-			if (media_file != NULL)
-			{
-				TagLib_Tag *tag = taglib_file_tag(media_file);
-				if (tag != NULL)
-				{
-					taglib_tag_set_comment(tag, stream->stream_title);
-					char* token=strtok(stream->stream_title,"-");
-					if (stream->TA == 0) {
-						if (token) {
-							taglib_tag_set_title(tag,token);
-							token=strtok(NULL,"-");
-						}
-						if (token) {
-							taglib_tag_set_artist(tag,token);
-						}
 					} else {
-						if (token) {
-							taglib_tag_set_artist(tag,token);
-							token=strtok(NULL,"-");
-						}
-						if (token) {
-							taglib_tag_set_title(tag,token);
+						if (stream_title[i]==0xE9) { // é
+							stream_title[i]=0xE9;
+							continue;
 						}
 					}
-					taglib_file_save(media_file);
 				}
-				taglib_tag_free_strings();
-				taglib_file_free(media_file);
+				if ( 	(stream_title[i]==0xC3)&&
+					(stream_title[i+1]==0x83)&&
+					(stream_title[i+2]==0x83)&&
+					(stream_title[i+3]==0xC2))
+				{
+					stream_title[i]=0xE9; //é C3 83 C2 A9
+					removechar(stream_title,i+1);
+					removechar(stream_title,i+2);
+					removechar(stream_title,i+3);
+					continue;
+				}
 			}
-			strncpy(stream->filename,new_filename, 254);
-			strncpy(stream->stream_title,stream_title, 500);
+
+			struct timeval curTime;
+			gettimeofday(&curTime, NULL);
+			int milli = curTime.tv_usec / 1000;
+
+			char buffr [80];
+			strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+
+			char currentTime[84] = "";
+			sprintf(currentTime, "%s.%03d", buffr, milli);
+
+			printf("%s stream_title: %s\n", currentTime, stream_title);
+			if (0 != strncmp(stream->stream_title, stream_title, 500))
+			{
+				char ext[3];
+				strncpy(ext, stream->ext, 3);
+				char oldfilename[255];
+				char oldtitle[500];
+				strncpy(oldfilename,stream->filename, 255);
+				strncpy(oldtitle,stream->stream_title, 500);
+
+				newfilename(stream, stream_title);
+
+				taglib_set_strings_unicode(FALSE);
+				TagLib_File *media_file;
+
+				if (strncmp(ext,"aac",3) == 0)
+				{
+					media_file = taglib_file_new_type(oldfilename, TagLib_File_MP4);
+				} else {
+					media_file = taglib_file_new(oldfilename);
+				}
+				if (media_file != NULL)
+				{
+					TagLib_Tag *tag = taglib_file_tag(media_file);
+					if (tag != NULL)
+					{
+						taglib_tag_set_comment(tag, oldtitle);
+						char* token=strtok(oldtitle,"-");
+						if (stream->TA == 0) {
+							if (token) {
+								taglib_tag_set_title(tag,token);
+								token=strtok(NULL,"-");
+							}
+							if (token) {
+								taglib_tag_set_artist(tag,token);
+							}
+						} else {
+							if (token) {
+								taglib_tag_set_artist(tag,token);
+								token=strtok(NULL,"-");
+							}
+							if (token) {
+								taglib_tag_set_title(tag,token);
+							}
+						}
+						taglib_file_save(media_file);
+					}
+					taglib_tag_free_strings();
+					taglib_file_free(media_file);
+				}
+			}
 		}
 		// slog metadata_content
-                snprintf(stream_title, 501, "%s\n", metadata_content);
-		slog(stream_title);
+		slog(metadata_content);
 
 		stream->bytes_count = 0;
 		stream->status = E_STATUS_MP3DATA;
@@ -186,16 +186,18 @@ int is_metadata(Stream *stream)
 
 int is_metadata_body(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_BODY)
+	if (stream->status == E_STATUS_METADATA_BODY){
 		return TRUE;
-	else
+	} else {
 		return FALSE;
+	}
 }
 
 int is_metadata_header(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_HEADER)
+	if (stream->status == E_STATUS_METADATA_HEADER){
 		return TRUE;
-	else
+	} else {
 		return FALSE;
+	}
 }

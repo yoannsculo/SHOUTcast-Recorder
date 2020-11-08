@@ -86,6 +86,9 @@ static int log_append(FILE *fp, char *line)
 	if (fputs(line, fp) == EOF)
 		return EOF;
 
+	if (fputc('\n', fp) == EOF)
+		return EOF;
+
 	if (fflush(fp) == EOF)
 		return EOF;
 	else

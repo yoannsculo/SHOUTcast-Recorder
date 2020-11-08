@@ -69,6 +69,6 @@ typedef struct
 	unsigned int metadata_count; // Number of metadata blocks received since beginning
 } Stream;
 
-void newfilename(const Stream *stream, char* filename, unsigned int size, char* title);
+void newfilename(Stream* stream,const char* title);
 
 #endif // __TYPES_H_

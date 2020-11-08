@@ -14,8 +14,11 @@ int extract_header_fields(ICYHeader *header)
 	get_http_header_field(header->buffer, "icy-genre", header->icy_genre);
 	get_http_header_field(header->buffer, "icy-pub", header->icy_pub);
 	get_http_header_field(header->buffer, "icy-br", header->icy_br);
-	get_http_header_field(header->buffer, "icy-metaint", metaint);
-	header->metaint = atoi(metaint);
+	if(0==get_http_header_field(header->buffer, "icy-metaint", metaint)){
+		header->metaint = atoi(metaint);
+	} else {
+		header->metaint = 0;
+	}
 	return 0;
 }
 

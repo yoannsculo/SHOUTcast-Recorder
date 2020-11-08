@@ -29,11 +29,17 @@ int header_listener(Stream *stream, char *buffer)
 
 		if (header->metaint == 0) {
 			printf("Error : Couldn't find metaint information\n");
+		} else {
+			print_header(header);
 		}
 
-		print_header(header);
-
 		// TODO init_for_mp3data(stream) ? 
+		stream->blocks_count        = 0;
+		stream->metadata_count      = 0;
+		stream->stream_title[0]     = '\0';
+		stream->output_stream       = NULL;
+		stream->filename[0]         = '\0';
+
 		stream->bytes_count  = 0;
 		stream->bytes_count_total = 0; // TODO : Commenter
 		stream->mp3data.size = 0;
@@ -47,10 +53,12 @@ int header_listener(Stream *stream, char *buffer)
 
 int is_header(Stream *stream)
 {
-	if (stream->status == E_STATUS_HEADER)
+	if (stream->status == E_STATUS_HEADER){
 		return TRUE;
-	else
+
+	} else {
 		return FALSE;
+	}
 }
 
 int print_header(ICYHeader *header)

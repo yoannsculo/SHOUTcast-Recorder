@@ -36,13 +36,9 @@ void SwapOfs(void *p) {
      to only run every N seconds, in order to do this the transaction time can
      be used */
   if(duration > 0 && (curtime - myp->lastruntime) >= duration) {
+    printf("SwapOfs duration %lld curtime %lld lastruntime %lld\n", duration, curtime, myp->lastruntime);
     myp->lastruntime = curtime;
-    stream->metadata_count++;
-    char new_filename[255] = "";
-    newfilename(stream, new_filename, 255, stream->stream_title);
-    fclose(stream->output_stream);
-    stream->output_stream = fopen(new_filename, "wb");
-    strncpy(stream->filename, new_filename, 254);
+    newfilename(stream, stream->stream_title);
   }
 }
 
@@ -112,7 +108,7 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
   curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 60L);
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-  curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+//  curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
 #if LIBCURL_VERSION_NUM >= 0x072000
   curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, xferinfo);
   /* pass the struct pointer into the xferinfo function, note that this is an alias to CURLOPT_PROGRESSDATA */
@@ -123,6 +119,9 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &prog);
 #endif
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+  curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+  curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:82.0) Gecko/20100101 Firefox/82.0");
   time_t start_t, end_t;
   time(&start_t);
   uint seconds_elapsed = 0;
