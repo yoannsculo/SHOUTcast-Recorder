@@ -12,6 +12,24 @@
 
 #include "log.h"
 
+static char ascii[256]={'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+' ','!','_','#','$','%','&','\'','(',')','_','+',',','-','.','_',
+'0','1','2','3','4','5','6','7','8','9','_',';','_','=','_','_',
+'@','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
+'P','Q','R','S','T','U','V','W','X','Y','Z','[','_',']','^','_',
+'`','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+'p','q','r','s','t','u','v','w','x','y','z','{','_','}','~',' ',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'A','A','A','A','A','A','E','C','E','E','E','E','I','I','I','I',
+'D','N','O','O','O','O','O','x','O','U','U','U','U','Y','p','B',
+'a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i',
+'o','o','o','o','o','o','o','+','o','u','u','u','u','y','p','y'};
+
+
 int metadata_listener(Stream *stream, char *buffer)
 {
 	if (!is_metadata(stream))
@@ -63,81 +81,9 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			stream_title[499]='\0';
 			metadata_content[499]='\0';
 			// filter problematic characters from StreamTitle
-	                for (unsigned int i =0; i < MIN(metadata->size,496); i++) {
+	                for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
 				if (stream_title[i]=='\0') { break;} //done
-				if (stream_title[i]=='*')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='?')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='>')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='<')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='\\') { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='|')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='\"') { stream_title[i]='_'; continue; }
-				if (stream_title[i]==':')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]=='/')  { stream_title[i]='_'; continue; }
-				if (stream_title[i]==0xC0)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC1)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC2)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC3)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC4)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC5)  { stream_title[i]='A'; continue; }
-				if (stream_title[i]==0xC6)  { stream_title[i]='E'; continue; }
-				if (stream_title[i]==0xC7)  { stream_title[i]='C'; continue; }
-				if (stream_title[i]==0xC8)  { stream_title[i]='E'; continue; }
-				if (stream_title[i]==0xC9)  { stream_title[i]='E'; continue; }
-				if (stream_title[i]==0xCA)  { stream_title[i]='E'; continue; }
-				if (stream_title[i]==0xCB)  { stream_title[i]='E'; continue; }
-				if (stream_title[i]==0xCC)  { stream_title[i]='I'; continue; }
-				if (stream_title[i]==0xCD)  { stream_title[i]='I'; continue; }
-				if (stream_title[i]==0xCE)  { stream_title[i]='I'; continue; }
-				if (stream_title[i]==0xCF)  { stream_title[i]='I'; continue; }
-				if (stream_title[i]==0xD0)  { stream_title[i]='D'; continue; }
-				if (stream_title[i]==0xD1)  { stream_title[i]='N'; continue; }
-				if (stream_title[i]==0xD2)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD3)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD4)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD5)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD6)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD7)  { stream_title[i]='x'; continue; }
-				if (stream_title[i]==0xD8)  { stream_title[i]='O'; continue; }
-				if (stream_title[i]==0xD9)  { stream_title[i]='U'; continue; }
-				if (stream_title[i]==0xDA)  { stream_title[i]='U'; continue; }
-				if (stream_title[i]==0xDB)  { stream_title[i]='U'; continue; }
-				if (stream_title[i]==0xDC)  { stream_title[i]='U'; continue; }
-				if (stream_title[i]==0xDD)  { stream_title[i]='Y'; continue; }
-				if (stream_title[i]==0xDE)  { stream_title[i]='p'; continue; }
-				if (stream_title[i]==0xDF)  { stream_title[i]='B'; continue; }
-				if (stream_title[i]==0xE0)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE1)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE2)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE3)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE4)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE5)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE6)  { stream_title[i]='a'; continue; }
-				if (stream_title[i]==0xE7)  { stream_title[i]='c'; continue; }
-				if (stream_title[i]==0xE8)  { stream_title[i]='e'; continue; }
-				if (stream_title[i]==0xE9)  { stream_title[i]='e'; continue; }
-				if (stream_title[i]==0xEA)  { stream_title[i]='e'; continue; }
-				if (stream_title[i]==0xEB)  { stream_title[i]='e'; continue; }
-				if (stream_title[i]==0xEC)  { stream_title[i]='i'; continue; }
-				if (stream_title[i]==0xED)  { stream_title[i]='i'; continue; }
-				if (stream_title[i]==0xEE)  { stream_title[i]='i'; continue; }
-				if (stream_title[i]==0xEF)  { stream_title[i]='i'; continue; }
-				if (stream_title[i]==0xF0)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF1)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF2)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF3)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF4)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF5)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF6)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF7)  { stream_title[i]='+'; continue; }
-				if (stream_title[i]==0xF8)  { stream_title[i]='o'; continue; }
-				if (stream_title[i]==0xF9)  { stream_title[i]='u'; continue; }
-				if (stream_title[i]==0xFA)  { stream_title[i]='u'; continue; }
-				if (stream_title[i]==0xFB)  { stream_title[i]='u'; continue; }
-				if (stream_title[i]==0xFC)  { stream_title[i]='u'; continue; }
-				if (stream_title[i]==0xFD)  { stream_title[i]='y'; continue; }
-				if (stream_title[i]==0xFE)  { stream_title[i]='p'; continue; }
-				if (stream_title[i]==0xFF)  { stream_title[i]='y'; continue; }
+				stream_title[i]=ascii[(int)stream_title[i]];
 			}
 
 			struct timeval curTime;
