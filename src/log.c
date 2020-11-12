@@ -6,7 +6,7 @@
 static FILE *fp_log;
 static char current_time[20];
 static char current_date[20];
-static char tempfile[255];
+static char tempfile[270];
 
 static int get_time(char *string)
 {
@@ -45,7 +45,7 @@ static int get_date(char *string)
 	return 0;
 }
 
-int log_open_files(void)
+int log_open_files(char* folder)
 {
 	if (fp_log != NULL)
 		return -1;
@@ -54,7 +54,7 @@ int log_open_files(void)
 		printf("Couldn't get date");
 		return -1;
 	}
-	snprintf(tempfile,255,"shoutr.%s.log",current_date);
+	snprintf(tempfile,270,"%s/shoutr.%s.log",folder,current_date);
 	fp_log = fopen(tempfile,"a");
 	if (fp_log == NULL) {
 		printf("Couldn't open shoutr.log file\n");

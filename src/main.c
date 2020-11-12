@@ -28,6 +28,7 @@ void usage(void)
 	printf("\t-e\t: fileextension (default mp3)\n");
 	printf("\t-f\t: basefilename (default radio)\n");
 	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
+	printf("\t-l\t: logfolder (default current folder)\n");
 	printf("\t-r\t: recording repeats (default 0 = none)\n");
 	printf("\t-x\t: proxy (default no proxy)\n");
 }
@@ -50,7 +51,10 @@ int main(int argc, char *argv[])
 	char* fileext = (char*) malloc(255*sizeof(char));
 	sprintf(fileext, "mp3");
 
-	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:")) != -1) {
+	char* log = (char*) malloc(255*sizeof(char));
+	sprintf(log, ".");
+
+	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -84,6 +88,9 @@ int main(int argc, char *argv[])
 			case 'i':
 				ta = optarg;
 				break;
+			case 'l':
+				log = optarg;
+				break;
 			case 'h':
 			default:
 				usage();
@@ -98,7 +105,7 @@ int main(int argc, char *argv[])
 		goto err_early;
 	}
 
-	if ((ret = log_open_files()) < 0) {
+	if ((ret = log_open_files(log)) < 0) {
 		printf("Couldn't open log files.\n");
 		goto err_early;
 	}
