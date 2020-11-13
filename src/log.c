@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "log.h"
 
@@ -53,6 +55,11 @@ int log_open_files(char* folder)
 	if( get_date(current_date) <0) {
 		printf("Couldn't get date");
 		return -1;
+	}
+	struct stat st;
+	if (stat(folder, &st) != 0)
+	{
+		mkdir(folder, 0777);
 	}
 	snprintf(tempfile,270,"%s/shoutr.%s.log",folder,current_date);
 	fp_log = fopen(tempfile,"a");
