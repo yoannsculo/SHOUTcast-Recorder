@@ -80,7 +80,7 @@ early_err:
 
 }
 
-void newfilename(Stream *stream, const char* title)
+void newfilename(Stream* stream, const char* title)
 {
  const int size=255+1+3+1+500+1+255;
  char filename[size];

@@ -1,6 +1,7 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <time.h>
+#include <stdlib.h>
 #include <string.h>
 #include "types.h"
 #include "parsing.h"
@@ -21,24 +22,28 @@ struct myprogress {
   CURL *curl;
   TIMETYPE duration;
   Stream *stream;
+  time_t last;
   void (*thread) (void *);
 };
 
 void SwapOfs(void *p) {
   struct myprogress *myp = (struct myprogress *)p;
   CURL *curl = myp->curl;
-  TIMETYPE duration = myp->duration;
   Stream *stream = myp->stream;
+  TIMETYPE duration = stream->duration;
   duration*=MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL;
+  time_t now;
+  time(&now);
   TIMETYPE curtime = 0;
   curl_easy_getinfo(curl, TIMEOPT, &curtime);
   /* under certain circumstances it may be desirable for certain functionality
      to only run every N seconds, in order to do this the transaction time can
      be used */
-  if(duration > 0 && (curtime - myp->lastruntime) >= duration) {
-    printf("SwapOfs duration %lld curtime %lld lastruntime %lld\n", duration, curtime, myp->lastruntime);
-    myp->lastruntime = curtime;
+  if( (curtime - myp->lastruntime) >= duration || difftime(now,myp->last)>= stream->duration) {
     newfilename(stream, stream->stream_title);
+    printf("SwapOfs\t%lld\t%lld\t%lld\t%ld\t%ld\t%s\n", duration, curtime, myp->lastruntime,now, myp->last, stream->filename);
+    myp->lastruntime = curtime;
+    myp->last=now;
   }
 }
 
@@ -91,12 +96,13 @@ int read_stream(Stream *stream)
     ret = -1;
     goto early_err;
   }
-  printf(" %x\n", LIBCURL_VERSION_NUM);
+  printf("libcurlversion %x\n", LIBCURL_VERSION_NUM);
+  printf("curl_off_t_fmt %s\n", CURL_FORMAT_CURL_OFF_T);
   prog.curl = curl;
   prog.stream = stream;
   prog.thread = &SwapOfs;
   prog.lastruntime = 0;
-  prog.duration = stream->duration;
+  time(&prog.last);
   headers = curl_slist_append(headers, "Icy-MetaData:1"); // On force la récupération des metadata
   curl_easy_setopt(curl, CURLOPT_URL, stream->url);
   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);

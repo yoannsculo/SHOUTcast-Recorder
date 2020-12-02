@@ -35,6 +35,10 @@ void usage(void)
 
 int main(int argc, char *argv[])
 {
+	if (argc == 1) {
+		usage();
+		return -1;
+	}
 	int ret = -1;
 	int pflag = 0;
 	int uflag = 0;
@@ -149,8 +153,6 @@ int main(int argc, char *argv[])
 err:
 	log_close_files();
 err_early:
-	free(basefilename);
-	free(fileext);
 	return ret;
 }
 
