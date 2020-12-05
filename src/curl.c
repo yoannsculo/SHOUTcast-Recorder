@@ -41,7 +41,7 @@ void SwapOfs(void *p) {
      be used */
   if( (curtime - myp->lastruntime) >= duration || difftime(now,myp->last)>= stream->duration) {
     newfilename(stream, stream->stream_title);
-    printf("SwapOfs\t%lld\t%lld\t%lld\t%ld\t%ld\t%s\n", duration, curtime, myp->lastruntime,now, myp->last, stream->filename);
+    printf("SwapOfs\t%lld\t%lld\t%08lld\t%ld\t%ld\t%s\n", duration, curtime, myp->lastruntime,now, myp->last, stream->filename);
     myp->lastruntime = curtime;
     myp->last=now;
   }
@@ -96,8 +96,9 @@ int read_stream(Stream *stream)
     ret = -1;
     goto early_err;
   }
-  printf("libcurlversion %x\n", LIBCURL_VERSION_NUM);
+  printf("libcurlversion %s\n", LIBCURL_VERSION);
   printf("curl_off_t_fmt %s\n", CURL_FORMAT_CURL_OFF_T);
+  printf("sizeof(curl_typeof_curl_off_t) %d\n", sizeof(CURL_TYPEOF_CURL_OFF_T));
   prog.curl = curl;
   prog.stream = stream;
   prog.thread = &SwapOfs;
