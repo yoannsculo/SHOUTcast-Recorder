@@ -41,7 +41,7 @@ void SwapOfs(void *p) {
      be used */
   if( (curtime - myp->lastruntime) >= duration || difftime(now,myp->last)>= stream->duration) {
     newfilename(stream, stream->stream_title);
-    printf("SwapOfs\t%lld\t%lld\t%08lld\t%ld\t%ld\t%s\n", duration, curtime, myp->lastruntime,now, myp->last, stream->filename);
+    printf("SwapOfs %lld %lld-%08lld=%lld %ld-%ld=%ld %s\n", duration, curtime, myp->lastruntime,curtime-myp->lastruntime, now, myp->last, now-myp->last,stream->filename);
     myp->lastruntime = curtime;
     myp->last=now;
   }
@@ -115,7 +115,14 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
   curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 60L);
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-//  curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+
+  curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 102400L);
+  curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 30000L);
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.64.0");
+  curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+  curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
+  curl_easy_setopt(curl, CURLOPT_HTTP09_ALLOWED, 1L);
+
 #if LIBCURL_VERSION_NUM >= 0x072000
   curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, xferinfo);
   /* pass the struct pointer into the xferinfo function, note that this is an alias to CURLOPT_PROGRESSDATA */
@@ -128,7 +135,6 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
   curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
   curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-  curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:82.0) Gecko/20100101 Firefox/82.0");
   time_t start_t, end_t;
   time(&start_t);
   uint seconds_elapsed = 0;
@@ -136,7 +142,7 @@ int read_stream(Stream *stream)
   do {
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, duration-seconds_elapsed);
     curl_res = curl_easy_perform(curl);
-    if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT) {
+    if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT && curl_res != CURLE_RECV_ERROR) {
       time(&now);
       info = localtime( &now );
       strftime(buffer,80,"%T", info);

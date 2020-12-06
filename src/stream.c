@@ -80,6 +80,40 @@ early_err:
 
 }
 
+static char tolower[256]={
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+' ','!','_','#','$','%','&','\'','(',')','_','+',',','-','.','_',
+'0','1','2','3','4','5','6','7','8','9','_',';','_','=','_','_',
+'@','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+'p','q','r','s','t','u','v','w','x','y','z','[','_',']','^',' ',
+'`','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+'p','q','r','s','t','u','v','w','x','y','z','{','_','}','~',' ',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',
+'a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i',
+'o','n','o','o','o','o','o','x','o','u','u','u','u','y','p','b',
+'a','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i',
+'o','o','o','o','o','o','o','+','o','u','u','u','u','y','p','y'};
+
+char* stristr(const char* haystack, const char* needle) {
+  do {
+    const char* h = haystack;
+    const char* n = needle;
+    while (tolower[(int)(*h)] == tolower[(int)(*n)] && *n) {
+      h++;
+      n++;
+    }
+    if (*n == 0) {
+      return (char *) haystack;
+    }
+  } while (*haystack++);
+  return 0;
+}
+
+
 void newfilename(Stream* stream, const char* title)
 {
  const int size=255+1+3+1+500+1+255;
@@ -88,6 +122,11 @@ void newfilename(Stream* stream, const char* title)
   snprintf(filename,size,"%s.%03d.%s", stream->basefilename, stream->metadata_count, stream->ext);
  } else {
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
+ }
+ if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
+  if (stristr(title, stream->onlytitle)==NULL) {
+    snprintf(filename,size,"%s","/dev/null");
+  }
  }
  filename[254]='\0';
  if (stream->output_stream != NULL) fclose(stream->output_stream);

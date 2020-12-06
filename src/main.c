@@ -30,6 +30,7 @@ void usage(void)
 	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
 	printf("\t-l\t: logfolder (default current folder)\n");
 	printf("\t-r\t: recording repeats (default 0 = none)\n");
+	printf("\t-t\t: title to record (default any)\n");
 	printf("\t-x\t: proxy (default no proxy)\n");
 }
 
@@ -58,7 +59,9 @@ int main(int argc, char *argv[])
 	char* log = (char*) malloc(255*sizeof(char));
 	sprintf(log, ".");
 
-	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:")) != -1) {
+	char* title = NULL;
+
+	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:t:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -94,6 +97,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'l':
 				log = optarg;
+				break;
+			case 't':
+				title = optarg;
 				break;
 			case 'h':
 			default:
@@ -132,6 +138,11 @@ int main(int argc, char *argv[])
 	memset(stream.proxy, 0, 255);
         if (proxy != NULL) {
 		strncpy(stream.proxy, proxy, 254);
+	}
+
+	memset(stream.onlytitle, 0, 255);
+        if (title != NULL) {
+		strncpy(stream.onlytitle, title, 254);
 	}
 
 	if (pflag) {

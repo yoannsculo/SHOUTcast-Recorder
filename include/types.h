@@ -52,6 +52,7 @@ typedef struct
 	char basefilename[255]; // basefilename of output file
 	char filename[255]; // current filename of output file
 	char ext[255]; // current extension of output file
+	char onlytitle[255];		// record only if title contains onlytitle
 	unsigned int duration;  // max recording duration
 	unsigned int repeat;  // max recording repeats
 	FILE *output_stream;    // Output MP3 file
