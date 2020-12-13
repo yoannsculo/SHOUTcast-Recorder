@@ -97,8 +97,6 @@ int read_stream(Stream *stream)
     goto early_err;
   }
   printf("libcurlversion %s\n", LIBCURL_VERSION);
-  printf("curl_off_t_fmt %s\n", CURL_FORMAT_CURL_OFF_T);
-  printf("sizeof(curl_typeof_curl_off_t) %d\n", sizeof(CURL_TYPEOF_CURL_OFF_T));
   prog.curl = curl;
   prog.stream = stream;
   prog.thread = &SwapOfs;

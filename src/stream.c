@@ -123,10 +123,10 @@ void newfilename(Stream* stream, const char* title)
  } else {
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
- if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
-  if (stristr(title, stream->onlytitle)==NULL) {
+ if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0&&stristr(title, stream->onlytitle)==NULL) {
     snprintf(filename,size,"%s","/dev/null");
-  }
+ } else {
+   stream->metadata_count++;
  }
  filename[254]='\0';
  if (stream->output_stream != NULL) fclose(stream->output_stream);
@@ -137,6 +137,5 @@ void newfilename(Stream* stream, const char* title)
  } else {
    strncpy(stream->stream_title, title, 500);
  }
- stream->metadata_count++;
 }
 
