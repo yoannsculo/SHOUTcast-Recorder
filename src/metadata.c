@@ -86,19 +86,18 @@ int metadata_body_handler(Stream *stream, char *buffer)
 				stream_title[i]=ascii[(int)stream_title[i]];
 			}
 
-			struct timeval curTime;
-			gettimeofday(&curTime, NULL);
-			int milli = curTime.tv_usec / 1000;
-
-			char buffr [80];
-			strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
-
-			char currentTime[84] = "";
-			sprintf(currentTime, "%s.%03d", buffr, milli);
-
-			printf("%s stream_title: %s\n", currentTime, stream_title);
 			if (0 != strncmp(stream->stream_title, stream_title, 500))
 			{
+				struct timeval curTime;
+				gettimeofday(&curTime, NULL);
+				int milli = curTime.tv_usec / 1000;
+
+				char buffr [80];
+				strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+				char currentTime[84] = "";
+				sprintf(currentTime, "%s.%03d", buffr, milli);
+				printf("%s stream_title: %s\n", currentTime, stream_title);
+
 				char ext[3];
 				strncpy(ext, stream->ext, 3);
 				char oldfilename[255];
