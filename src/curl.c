@@ -48,6 +48,7 @@ void SwapOfs(void *p) {
 
     char buffr [80];
     strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+
     char currentTime[84] = "";
     sprintf(currentTime, "%s.%03d", buffr, milli);
 
@@ -97,7 +98,6 @@ int read_stream(Stream *stream)
   strftime(buffer,80, "%T", info);
   printf("%s stream->url [%s]\n", buffer, stream->url);
   printf("%s stream->proxy [%s]\n", buffer, stream->proxy);
-  printf(buffer);
   if ((curl = curl_easy_init()) == NULL) {
     time(&now);
     info = localtime( &now );
@@ -106,7 +106,7 @@ int read_stream(Stream *stream)
     ret = -1;
     goto early_err;
   }
-  printf("libcurlversion %s\n", LIBCURL_VERSION);
+  printf("%s libcurlversion %s\n", buffer, LIBCURL_VERSION);
   prog.curl = curl;
   prog.stream = stream;
   prog.thread = &SwapOfs;
@@ -143,6 +143,7 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
   curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
   curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+  curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
   time_t start_t, end_t;
   time(&start_t);
   uint seconds_elapsed = 0;

@@ -24,11 +24,12 @@ void usage(void)
 {
 	printf("Usage: shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]\n");
 	printf("options:\n");
-	printf("\t-d\t: recording duration (in seconds, default 0 = unlimited)\n");
+	printf("\t-d\t: recording duration (in seconds)\n");
 	printf("\t-e\t: fileextension (default mp3)\n");
 	printf("\t-f\t: basefilename (default radio)\n");
 	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
 	printf("\t-l\t: logfolder (default current folder)\n");
+	printf("\t-n\t: name of station (default radio)\n");
 	printf("\t-r\t: recording repeats (default 0 = none)\n");
 	printf("\t-t\t: title to record (default any)\n");
 	printf("\t-x\t: proxy (default no proxy)\n");
@@ -53,6 +54,8 @@ int main(int argc, char *argv[])
 	char* basefilename = (char*) malloc(255*sizeof(char));
 	sprintf(basefilename, "radio");
 	
+	char* stationname = NULL;
+	
 	char* fileext = (char*) malloc(255*sizeof(char));
 	sprintf(fileext, "mp3");
 
@@ -61,7 +64,7 @@ int main(int argc, char *argv[])
 
 	char* title = NULL;
 
-	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:t:")) != -1) {
+	while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:n:t:")) != -1) {
 		switch(c) {
 			// playlist
 			case 'p':
@@ -98,6 +101,9 @@ int main(int argc, char *argv[])
 			case 'l':
 				log = optarg;
 				break;
+			case 'n':
+				stationname = optarg;
+				break;
 			case 't':
 				title = optarg;
 				break;
@@ -131,6 +137,11 @@ int main(int argc, char *argv[])
 
 	memset(stream.ext, 0, 255);
 	strncpy(stream.ext, fileext, 254);
+
+	memset(stream.stream_title, 0, 255);
+	if (stationname != NULL) {
+		strncpy(stream.stream_title, stationname, 254);
+	}
 
         stream.duration=atoi(duration);
         stream.repeat=atoi(repeat);

@@ -96,7 +96,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 				strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
 				char currentTime[84] = "";
 				sprintf(currentTime, "%s.%03d", buffr, milli);
-				printf("%s stream_title: %s\n", currentTime, stream_title);
+				printf("%s stream_title: [%s]\n", currentTime, stream_title);
 
 				char ext[3];
 				strncpy(ext, stream->ext, 3);
