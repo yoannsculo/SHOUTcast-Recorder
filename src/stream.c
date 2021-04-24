@@ -124,8 +124,10 @@ void newfilename(Stream* stream, const char* title)
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
  if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
-  char* token=strtok(stream->onlytitle,",");
+  char str[255];
+  strncpy(str, stream->onlytitle, 255);
   int title_found = 0;
+  char* token=strtok(str,",");
   if (token) {
    while (token) {
     if(stristr(title, token)!=NULL) {
