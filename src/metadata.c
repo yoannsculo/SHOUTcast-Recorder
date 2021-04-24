@@ -68,6 +68,16 @@ void removechar( char str[], unsigned int i )
     str[strlen(str)-1]='\0';
 }
 
+void rtrim(char *str)
+{
+    const char *seps = "\t\n\v\f\r ";
+    int i = strlen(str) - 1;
+    while (i >= 0 && strchr(seps, str[i]) != NULL) {
+        str[i] = '\0';
+        i--;
+    }
+}
+
 int metadata_body_handler(Stream *stream, char *buffer)
 {
 	MetaData *metadata = &stream->metadata;
@@ -85,7 +95,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 				if (stream_title[i]=='\0') { break;} //done
 				stream_title[i]=ascii[(int)stream_title[i]];
 			}
-
+                        rtrim(stream_title);
 			if (0 != strncmp(stream->stream_title, stream_title, 500))
 			{
 				struct timeval curTime;

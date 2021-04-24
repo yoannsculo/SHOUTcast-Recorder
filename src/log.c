@@ -42,7 +42,7 @@ static int get_date(char *string)
     	time (&rawtime);
       	timeinfo = localtime(&rawtime);
 
-	sprintf(string, "%d", timeinfo->tm_wday);
+	sprintf(string, "%d", timeinfo->tm_mday);
 
 	return 0;
 }

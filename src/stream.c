@@ -123,8 +123,26 @@ void newfilename(Stream* stream, const char* title)
  } else {
   snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
  }
- if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0&&stristr(title, stream->onlytitle)==NULL) {
+ if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
+  char* token=strtok(stream->onlytitle,",");
+  int title_found = 0;
+  if (token) {
+   while (token) {
+    if(stristr(title, token)!=NULL) {
+     title_found = 1;
+    }
+    token=strtok(NULL,",");
+   }
+  } else {
+    if(stristr(title, stream->onlytitle)!=NULL) {
+     title_found = 1;
+    }
+  }
+  if (title_found == 0) {
     snprintf(filename,size,"%s","/dev/null");
+   } else {
+   stream->metadata_count++;
+  }
  } else {
    stream->metadata_count++;
  }
