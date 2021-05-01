@@ -39,13 +39,15 @@ How to build it
 How to run it
 -------------
 
-Usage: shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]
+Usage:
+
+	./shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]
 
 Examples :
 
 	./shoutr -u http://88.190.24.47:80 -f ./%w-%H -d 3580
 
-	./shoutr -p frequence3.pls ./log
+	./shoutr -p frequence3.pls -l ./log
 
 OPTIONS:
 
@@ -99,34 +101,33 @@ stream=http://88.190.24.47:80
 
 copy recordings in recording order :
 
-`
-#!/bin/bash
-SECONDS=0
-TEST=
-IFS=$'\n'
-DRIVE="$(dirname "$0")"
-DST="${DRIVE}/.."
-LOG="${DRIVE}/copyit.LOG"
-echo "" > $LOG
-
-function cpit {
-$TEST mkdir -pv "${DST}/${CWD}" | tee -a $LOG
-for i in $( find "${SRC}${CWD}" -type f -mtime -6 | sort )
-do 
- $TEST rsync --min-size=1mb -avh --no-p --no-g --chmod=ugo=rwX --modify-window=2 "$i" "${DST}/${CWD}" | tee -a $LOG
-done
-}
-
-SRC=/mnt/nfs/HDD/
-for G in "CD01" "CD02" "CD04" 
-do
- CWD=$G
- echo $CWD $DST
- cpit
-done
-echo "Script finished in $SECONDS seconds=> $(($SECONDS/60)) min $(($SECONDS%60)) sec" | tee -a $LOG
-`
-
+	
+	#!/bin/bash
+	SECONDS=0
+	TEST=
+	IFS=$'\n'
+	DRIVE="$(dirname "$0")"
+	DST="${DRIVE}/.."
+	LOG="${DRIVE}/copyit.LOG"
+	echo "" > $LOG
+	
+	function cpit {
+	$TEST mkdir -pv "${DST}/${CWD}" | tee -a $LOG
+	for i in $( find "${SRC}${CWD}" -type f -mtime -6 | sort )
+	do 
+	 $TEST rsync --min-size=1mb -avh --no-p --no-g --chmod=ugo=rwX --modify-window=2 "$i" "${DST}/${CWD}" | tee -a $LOG
+	done
+	}
+	
+	SRC=/mnt/nfs/HDD/
+	for G in "CD01" "CD02" "CD04" 
+	do
+	 CWD=$G
+	 echo $CWD $DST
+	 cpit
+	done
+	echo "Script finished in $SECONDS seconds=> $(($SECONDS/60)) min $(($SECONDS%60)) sec" | tee -a $LOG
+	
 TODO
 ----
 
