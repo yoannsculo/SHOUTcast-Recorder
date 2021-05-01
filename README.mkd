@@ -10,11 +10,11 @@ Dependencies
 ------------
 
 - libcurl
-  sudo apt-get install libcurl-dev
-  sudo apt-get install libcurl4-openssl-dev
+	- sudo apt-get install libcurl-dev
+	- sudo apt-get install libcurl4-openssl-dev
 - taglib
-  sudo apt-get install libtag1-dev
-  sudo apt-get install libtagc0-dev
+	- sudo apt-get install libtag1-dev
+	- sudo apt-get install libtagc0-dev
  
 
 How does it work ?
@@ -32,54 +32,58 @@ How does it work ?
 How to build it
 ---------------
 
-use make to build
-artefact is in build folder
-see Makefile
+- use make to build
+- artefact is in build folder
+- see Makefile
 
 How to run it
 -------------
 
-Here are two examples :
+Usage: shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]
+
+Examples :
 
 	./shoutr -u http://88.190.24.47:80 -f ./%w-%H -d 3580
 
-or
+	./shoutr -p frequence3.pls ./log
 
-	./shoutr -p frequence3.pls
+OPTIONS:
 
-Additional commandline options
-
-	-x proxy	defines proxy to use, (see CURLOPT_PROXY)
-	-f hotmusic	defines the base name of the mp3 file(s) created
 	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
+	-e extension    fileextension (default: mp3)
+	-f basefilename	defines the base name of the mp3 file(s) created (default: radio)
+	-i id3tags      split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
+	-l logfolder    (rel/abs) path to folder for log (default: current folder)
+	-n name         name of station (default radio)
 	-r repeat	repeat the recording specified number of times
-        -i id3tags      split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
-	
+	-t title        (part of) title to record (default any) (tip: use '-' to record only music)
+	-x proxy	defines proxy to use (see CURLOPT_PROXY)
+
 without these additional commandline options specified
 
 	no proxy is used 
-       libcurl respects the proxy environment variables named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY
+		libcurl respects the proxy environment variables named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY
 	basename will be radio###.mp3 
-       ### is incrementing number
-          incrementing number can be used for sorting. 
-          as metadata is never changing exacty on the moment the song changes,
-            a fluent playback is only possible in recording order (hence incrementing number)
-       incrementing number will increment when 
-          metadata streamtitle changes
-          repeat > 0 and duration passes
-	basename can handle timestamp directives (see strftime)
-	basename will be appended with name of downloaded music using metadata (if available)
+		### is incrementing number
+		incrementing number can be used for sorting. 
+			as metadata is never changing exacty on the moment the song changes,
+			a fluent playback is only possible in recording order (hence incrementing number)
+		incrementing number will increment when
+			metadata streamtitle changes
+			repeat > 0 and duration passes
+		basename can handle timestamp directives (see strftime)
+		basename will be appended with name of station (if provided with -n) and downloaded music using metadata (if available)
 	duration will be infinite (see CURLOPT_TIMEOUT)
-    repeat will be 0 (no repeat)
-       repeat will 
-          reuse/continue the recording using the existing connection
-          avoid establishing new connection (preventing new connection pub)
-          change incrementing number
-          create a separate recording file for each repeat
-          not change basename (weekday nor Hour nor any supplied timestamp directive)
-       N.B. a repeat set to 2 will produce 3 recordings (0, 1=1st repeat, 2=2nd repeat)
-          (of the same stream and of the same duration)
-    non-empty stream_title will be used for id3tag assuming artist - title
+	repeat will be 0 (no repeat)
+	repeat will 
+		reuse/continue the recording using the existing connection
+		avoid establishing new connection (preventing new connection pub)
+		change incrementing number
+		create a separate recording file for each repeat
+		not change basename (weekday nor hour nor any supplied timestamp directive)
+		N.B. a repeat set to 2 will produce 3 recordings (0, 1=1st repeat, 2=2nd repeat)
+			(of the same stream and of the same duration)
+	non-empty stream_title will be used for id3tag assuming artist - title
 
 
 cron example :
