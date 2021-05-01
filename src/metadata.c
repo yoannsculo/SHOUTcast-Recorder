@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
 #include <string.h>
 #include <sys/param.h>
 
@@ -68,7 +66,7 @@ void removechar( char str[], unsigned int i )
     str[strlen(str)-1]='\0';
 }
 
-void rtrim(char *str)
+void rtrim(char str[])
 {
     const char *seps = "\t\n\v\f\r ";
     int i = strlen(str) - 1;
@@ -98,15 +96,8 @@ int metadata_body_handler(Stream *stream, char *buffer)
                         rtrim(stream_title);
 			if (0 != strncmp(stream->stream_title, stream_title, 500))
 			{
-				struct timeval curTime;
-				gettimeofday(&curTime, NULL);
-				int milli = curTime.tv_usec / 1000;
+				plog("stream_title: [%s]\n", stream_title);
 
-				char buffr [80];
-				strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
-				char currentTime[84] = "";
-				sprintf(currentTime, "%s.%03d", buffr, milli);
-				printf("%s stream_title: [%s]\n", currentTime, stream_title);
 
 				char ext[3];
 				strncpy(ext, stream->ext, 3);

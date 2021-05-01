@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 #include "log.h"
 
@@ -42,7 +44,7 @@ static int get_date(char *string)
     	time (&rawtime);
       	timeinfo = localtime(&rawtime);
 
-	sprintf(string, "%d", timeinfo->tm_mday);
+	sprintf(string, "%02d", timeinfo->tm_mday);
 
 	return 0;
 }
@@ -108,3 +110,19 @@ void slog(char *line)
 		printf("Coudln't write shoutr log\n");
 }
 
+void printCurrentTime() {
+	struct timeval curTime;
+	gettimeofday(&curTime, NULL);
+	int milli = curTime.tv_usec / 1000;
+	char buffr [80];
+	strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+	printf("%s.%03d ", buffr, milli);
+}
+
+void plog(char *fmt, ...) {
+	printCurrentTime();
+	va_list ap;
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
+}

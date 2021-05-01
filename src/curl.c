@@ -5,6 +5,7 @@
 #include <string.h>
 #include "types.h"
 #include "parsing.h"
+#include "log.h"
 
 #if LIBCURL_VERSION_NUM >= 0x073d00
 #define TIME_IN_US 1
@@ -42,17 +43,7 @@ void SwapOfs(void *p) {
   if( (curtime - myp->lastruntime) >= duration || difftime(now,myp->last)>= stream->duration) {
     newfilename(stream, stream->stream_title);
 
-    struct timeval curTime;
-    gettimeofday(&curTime, NULL);
-    int milli = curTime.tv_usec / 1000;
-
-    char buffr [80];
-    strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
-
-    char currentTime[84] = "";
-    sprintf(currentTime, "%s.%03d", buffr, milli);
-
-    printf("%s SwapOfs %lld %lld-%08lld=%lld %ld-%ld=%ld %s\n", currentTime, duration, curtime, myp->lastruntime,curtime-myp->lastruntime, now, myp->last, now-myp->last,stream->filename);
+    plog("SwapOfs %lld %lld-%08lld=%lld %ld-%ld=%ld %s\n", duration, curtime, myp->lastruntime,curtime-myp->lastruntime, now, myp->last, now-myp->last,stream->filename);
     myp->lastruntime = curtime;
     myp->last=now;
   }

@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <sys/time.h>
 
 #include "types.h"
 #include "stream.h"
 #include "files.h"
 #include "pls.h"
 #include "curl.h"
+#include "log.h"
 
 int load_stream(Stream *stream, const char *url)
 {
@@ -157,13 +156,6 @@ void newfilename(Stream* stream, const char* title)
  } else {
    strncpy(stream->stream_title, title, 500);
  }
- struct timeval curTime;
- gettimeofday(&curTime, NULL);
- int milli = curTime.tv_usec / 1000;
- char buffr[20];
- strftime(buffr, 20, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
- char currentTime[30] = "";
- sprintf(currentTime, "%s.%03d", buffr, milli);
- printf("%s newfilename: %s\n", currentTime, filename);
+ plog("newfilename: %s\n", filename);
 }
 
