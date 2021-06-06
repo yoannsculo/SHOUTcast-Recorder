@@ -175,6 +175,10 @@ int main(int argc, char *argv[])
 err:
 	log_close_files();
 err_early:
+	free_stream(&stream);
+	free(basefilename);
+	free(fileext);
+	free(log);
 	return ret;
 }
 
@@ -186,7 +190,7 @@ size_t parse_header(void *ptr, size_t size, size_t nmemb, void *userdata)
 	size_t numbytes = size * nmemb;
 
 	//stream->header.buffer;
-	//copy *ptr to neader.buffer starting at header.ptr position
+	//copy *ptr to header.buffer starting at header.ptr position
 	void* dest = stream->header.ptr;
 	memcpy(dest, ptr, numbytes);
 	

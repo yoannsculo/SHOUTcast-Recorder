@@ -1,10 +1,7 @@
 SHOUTcast Recorder
 ==================
 
-SHOUTcast Recorder is able to record and store SHOUTcast stream automatically
-into separate mp3 files. This software was initially conceived to understand
-the SHOUTcast protocol, not really to record web radios ;) The fun part is to
-play with the protocol !
+SHOUTcast Recorder is able to record and store SHOUTcast stream automatically into separate mp3 files. This software was initially conceived to understand the SHOUTcast protocol, not really to record web radios ;) The fun part is to play with the protocol !
 
 Dependencies
 ------------
@@ -51,15 +48,15 @@ Examples :
 
 OPTIONS:
 
-	-d duration	defines the recording length in seconds (see CURLOPT_TIMEOUT)
-	-e extension    fileextension (default: mp3)
+	-d duration		defines the recording length in seconds (see CURLOPT_TIMEOUT)
+	-e extension	fileextension (default: mp3)
 	-f basefilename	defines the base name of the mp3 file(s) created (default: radio)
-	-i id3tags      split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
-	-l logfolder    (rel/abs) path to folder for log (default: current folder)
-	-n name         name of station (default radio)
-	-r repeat	repeat the recording specified number of times
-	-t title        (part of) title to record (default any) (tip: use '-' to record only music)
-	-x proxy	defines proxy to use (see CURLOPT_PROXY)
+	-i id3tags		split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
+	-l logfolder	(rel/abs) path to folder for log (default: current folder)
+	-n name			name of station (default radio)
+	-r repeat		repeat the recording specified number of times
+	-t title		(part of) title to record (default any) (tip: use '-' to record only music)
+	-x proxy		defines proxy to use (see CURLOPT_PROXY)
 
 without these additional commandline options specified
 
@@ -89,15 +86,15 @@ without these additional commandline options specified
 
 
 cron example :
-`
-SHELL=/bin/bash
-log=/HDD/log/crontab.
-dt=date +%Y%m%d
-dow=date +%u
 
-stream=http://88.190.24.47:80
-0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
-`
+	SHELL=/bin/bash
+	log=/HDD/log/crontab.
+	dt=date +%Y%m%d
+	dow=date +%u
+	
+	stream=http://88.190.24.47:80
+	0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
+
 
 copy recordings in recording order :
 
@@ -146,3 +143,6 @@ See the file COPYING for details.
 Contact
 -------
 Yoann Sculo - <yoann.sculo@gmail.com>
+
+------
+markdown by http://remarkableapp.github.io/

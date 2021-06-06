@@ -25,7 +25,6 @@ int header_listener(Stream *stream, char *buffer)
 
 	if (is_end_of_http_header(header)) {
 		extract_header_fields(header); 
-		free(header->buffer);
 
 		if (header->metaint == 0) {
 			printf("Error : Couldn't find metaint information\n");

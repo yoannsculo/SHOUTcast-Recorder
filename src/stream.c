@@ -9,6 +9,12 @@
 #include "curl.h"
 #include "log.h"
 
+void free_stream(Stream *stream)
+{
+	ICYHeader *header = &stream->header;
+	free(header->buffer);
+	header->ptr= NULL;
+}
 int load_stream(Stream *stream, const char *url)
 {
 	ICYHeader *header = &stream->header;
