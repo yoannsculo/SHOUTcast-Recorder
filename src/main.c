@@ -129,11 +129,8 @@ int main(int argc, char *argv[])
 	Stream stream;
 	stream.TA=atoi(ta);
 
-	time_t rawtime;
-        struct tm * timeinfo;
-        time (&rawtime);
-        timeinfo = localtime(&rawtime);
-	strftime(stream.basefilename,254,basefilename,timeinfo);
+	memset(stream.basefilename, 0, 255);
+	strncpy(stream.basefilename,basefilename,254);
 
 	memset(stream.ext, 0, 255);
 	strncpy(stream.ext, fileext, 254);
@@ -175,10 +172,6 @@ int main(int argc, char *argv[])
 err:
 	log_close_files();
 err_early:
-	free_stream(&stream);
-	free(basefilename);
-	free(fileext);
-	free(log);
 	return ret;
 }
 

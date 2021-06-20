@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h>
 #include "types.h"
 #include "stream.h"
 #include "files.h"
@@ -11,6 +11,7 @@
 
 void free_stream(Stream *stream)
 {
+	plog("free_stream\n");
 	ICYHeader *header = &stream->header;
 	free(header->buffer);
 	header->ptr= NULL;
@@ -118,15 +119,39 @@ char* stristr(const char* haystack, const char* needle) {
   return 0;
 }
 
+int exists(const char *fname)
+{
+    FILE *file;
+    if ((file = fopen(fname, "r")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
 
 void newfilename(Stream* stream, const char* title)
 {
  const int size=255+1+3+1+500+1+255;
  char filename[size];
+ time_t rawtime;
+ struct tm * timeinfo;
+ time (&rawtime);
+ timeinfo = localtime(&rawtime);
+ char basefilename[255];
+ strftime(basefilename,254,stream->basefilename,timeinfo);
  if (title==NULL||strlen(title)==0) {
-  snprintf(filename,size,"%s.%03d.%s", stream->basefilename, stream->metadata_count, stream->ext);
+  snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
+  while (1 == exists(filename)) {
+   stream->metadata_count++;
+   snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
+  }
  } else {
-  snprintf(filename,size,"%s.%03d.%s.%s", stream->basefilename, stream->metadata_count, title, stream->ext);
+  snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
+  while (1 == exists(filename)) {
+   stream->metadata_count++;
+   snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
+  }
  }
  if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
   char str[255];

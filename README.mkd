@@ -90,10 +90,9 @@ cron example :
 	SHELL=/bin/bash
 	log=/HDD/log/crontab.
 	dt=date +%Y%m%d
-	dow=date +%u
 	
 	stream=http://88.190.24.47:80
-	0 10 * * * cd /HDD; ./shoutr -u $stream -f ./$($dow)-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
+	0 10 * * * cd /HDD; ./shoutr -u $stream -f ./\%u-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
 
 
 copy recordings in recording order :
