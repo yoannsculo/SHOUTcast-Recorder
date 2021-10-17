@@ -44,7 +44,7 @@ static int get_date(char *string)
     	time (&rawtime);
       	timeinfo = localtime(&rawtime);
 
-	sprintf(string, "%02d", timeinfo->tm_mday);
+	sprintf(string, "%03d", timeinfo->tm_yday+1);
 
 	return 0;
 }
