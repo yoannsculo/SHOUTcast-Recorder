@@ -153,31 +153,35 @@ void newfilename(Stream* stream, const char* title)
    snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
   }
  }
- if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
-  char str[255];
-  strncpy(str, stream->onlytitle, 255);
-  int title_found = 0;
-  char* token=strtok(str,",");
-  if (token) {
-   while (token) {
-    if(stristr(title, token)!=NULL) {
-     title_found = 1;
+ if (title==NULL||strlen(title)==0) {
+   // don't search for title match if no title to match 
+ } else {
+  if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
+   char str[255];
+   strncpy(str, stream->onlytitle, 255);
+   int title_found = 0;
+   char* token=strtok(str,",");
+   if (token) {
+    while (token) {
+     if(stristr(title, token)!=NULL) {
+      title_found = 1;
+     }
+     token=strtok(NULL,",");
     }
-    token=strtok(NULL,",");
+   } else {
+     if(stristr(title, stream->onlytitle)!=NULL) {
+      title_found = 1;
+     }
+   }
+   if (title_found == 0) {
+    snprintf(filename,size,"%s","/dev/null");
+    } else {
+    stream->metadata_count++;
    }
   } else {
-    if(stristr(title, stream->onlytitle)!=NULL) {
-     title_found = 1;
-    }
+    stream->metadata_count++;
   }
-  if (title_found == 0) {
-    snprintf(filename,size,"%s","/dev/null");
-   } else {
-   stream->metadata_count++;
-  }
- } else {
-   stream->metadata_count++;
- }
+}
  filename[254]='\0';
  if (stream->output_stream != NULL) fclose(stream->output_stream);
  stream->output_stream = fopen(filename, "wb");
