@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
-
 #include "icy-string.h"
 
 int extract_header_fields(ICYHeader *header)
@@ -28,7 +27,7 @@ int get_http_header_field(char *header, const char* field, char* value)
 	char *occurrence = NULL; 
 	int content_pos = 0;
 
-	occurrence  = strstr(header, field);
+	occurrence  = strcasestr(header, field);
 	content_pos = strlen(field)+1;
 	if (occurrence != NULL)	{
 		for (i=content_pos; occurrence[i] != '\0';i++) {
@@ -52,7 +51,7 @@ int get_metadata_field(char *metadata, const char* field, char* value)
 	char *occurrence = NULL;
 	split = strtok (metadata,";");
 	while (split != NULL) {
-		occurrence  = strstr(split, field);
+		occurrence  = strcasestr(split, field);
 		if (occurrence != NULL) {
 			unsigned int content_pos = strlen(field)+2;
 			unsigned int content_size = strlen(split)-content_pos-1; 

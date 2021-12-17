@@ -29,14 +29,14 @@ int header_listener(Stream *stream, char *buffer)
 		if (header->metaint == 0) {
 			printf("Error : Couldn't find metaint information\n");
 		} else {
-			print_header(header);
+			stream->status = E_STATUS_MP3DATA;
 		}
+		print_header(header);
 
 		// TODO init_for_mp3data(stream) ? 
 		stream->bytes_count  = 0;
 		stream->bytes_count_total = 0; // TODO : Commenter
 		stream->mp3data.size = 0;
-		stream->status = E_STATUS_MP3DATA;
 	}
 	else {
 		header->ptr++;

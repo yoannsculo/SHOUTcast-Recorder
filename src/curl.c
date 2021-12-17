@@ -115,7 +115,7 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 60L);
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-  curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 102400L);
+  curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, CURL_MAX_READ_SIZE);
   curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 30000L);
   curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.64.0");
   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
