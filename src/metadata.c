@@ -123,24 +123,22 @@ int metadata_body_handler(Stream *stream, char *buffer)
 					if (tag != NULL)
 					{
 						taglib_tag_set_comment(tag, oldtitle);
-						char* token=strtok(oldtitle,"-");
-						if (stream->TA == 0) {
-							if (token) {
-								taglib_tag_set_title(tag,token);
-								token=strtok(NULL,"-");
-							}
-							if (token) {
-								taglib_tag_set_artist(tag,token);
-							}
-						} else {
-							if (token) {
-								taglib_tag_set_artist(tag,token);
-								token=strtok(NULL,"-");
-							}
-							if (token) {
-								taglib_tag_set_title(tag,token);
-							}
-						}
+						char * const sep_at = strstr(oldtitle, " - ");
+                                                if (sep_at != NULL) {
+                                                        *sep_at='\0';
+                                                        char* title;
+                                                        char* artist;
+                                                        if (stream->TA == 0) {
+                                                            title = oldtitle;
+                                                            artist = sep_at+3;
+                                                        } else {
+                                                            artist = oldtitle;
+                                                            title = sep_at+3;
+                                                        }
+                                                        taglib_tag_set_title(tag,title);
+							taglib_tag_set_album(tag,title);
+							taglib_tag_set_artist(tag,artist);
+                                                }
 						taglib_file_save(media_file);
 					}
 					taglib_tag_free_strings();
