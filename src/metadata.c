@@ -61,19 +61,19 @@ int metadata_header_handler(Stream *stream, char *buffer)
 
 void removechar( char str[], unsigned int i )
 {
-    for (unsigned int j=i; j<strlen(str)-2; j++)
-         str[j]=str[j+1];
-    str[strlen(str)-1]='\0';
+	for (unsigned int j=i; j<strlen(str)-2; j++)
+		str[j]=str[j+1];
+	str[strlen(str)-1]='\0';
 }
 
 void rtrim(char str[])
 {
-    const char *seps = "\t\n\v\f\r ";
-    int i = strlen(str) - 1;
-    while (i >= 0 && strchr(seps, str[i]) != NULL) {
-        str[i] = '\0';
-        i--;
-    }
+	const char *seps = "\t\n\v\f\r ";
+	int i = strlen(str) - 1;
+	while (i >= 0 && strchr(seps, str[i]) != NULL) {
+		str[i] = '\0';
+		i--;
+	}
 }
 
 int metadata_body_handler(Stream *stream, char *buffer)
@@ -89,11 +89,11 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			stream_title[499]='\0';
 			metadata_content[499]='\0';
 			// filter problematic characters from StreamTitle
-	                for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
+			for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
 				if (stream_title[i]=='\0') { break;} //done
 				stream_title[i]=ascii[(int)stream_title[i]];
 			}
-                        rtrim(stream_title);
+			rtrim(stream_title);
 			if (0 != strncmp(stream->stream_title, stream_title, 500))
 			{
 				plog("stream_title: [%s]\n", stream_title);
@@ -124,21 +124,21 @@ int metadata_body_handler(Stream *stream, char *buffer)
 					{
 						taglib_tag_set_comment(tag, oldtitle);
 						char * const sep_at = strstr(oldtitle, " - ");
-                                                if (sep_at != NULL) {
-                                                        *sep_at='\0';
-                                                        char* title;
-                                                        char* artist;
-                                                        if (stream->TA == 0) {
-                                                            title = oldtitle;
-                                                            artist = sep_at+3;
-                                                        } else {
-                                                            artist = oldtitle;
-                                                            title = sep_at+3;
-                                                        }
-                                                        taglib_tag_set_title(tag,title);
+						if (sep_at != NULL) {
+							*sep_at='\0';
+							char* title;
+							char* artist;
+							if (stream->TA == 0) {
+								title = oldtitle;
+								artist = sep_at+3;
+							} else {
+								artist = oldtitle;
+								title = sep_at+3;
+							}
+							taglib_tag_set_title(tag,title);
 							taglib_tag_set_album(tag,title);
 							taglib_tag_set_artist(tag,artist);
-                                                }
+						}
 						taglib_file_save(media_file);
 					}
 					taglib_tag_free_strings();
