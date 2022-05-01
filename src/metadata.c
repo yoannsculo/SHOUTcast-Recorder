@@ -6,7 +6,6 @@
 #include "types.h"
 #include "metadata.h"
 #include "icy-string.h"
-#include <taglib/tag_c.h>
 
 #include "log.h"
 
@@ -97,53 +96,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
 			if (0 != strncmp(stream->stream_title, stream_title, 500))
 			{
 				plog("stream_title: [%s]\n", stream_title);
-
-
-				char ext[3];
-				strncpy(ext, stream->ext, 3);
-				char oldfilename[255];
-				char oldtitle[500];
-				strncpy(oldfilename,stream->filename, 255);
-				strncpy(oldtitle,stream->stream_title, 500);
-
 				newfilename(stream, stream_title);
-
-				taglib_set_strings_unicode(FALSE);
-				TagLib_File *media_file;
-
-				if (strncmp(ext,"aac",3) == 0)
-				{
-					media_file = taglib_file_new_type(oldfilename, TagLib_File_MP4);
-				} else {
-					media_file = taglib_file_new(oldfilename);
-				}
-				if (media_file != NULL)
-				{
-					TagLib_Tag *tag = taglib_file_tag(media_file);
-					if (tag != NULL)
-					{
-						taglib_tag_set_comment(tag, oldtitle);
-						char * const sep_at = strstr(oldtitle, " - ");
-						if (sep_at != NULL) {
-							*sep_at='\0';
-							char* title;
-							char* artist;
-							if (stream->TA == 0) {
-								title = oldtitle;
-								artist = sep_at+3;
-							} else {
-								artist = oldtitle;
-								title = sep_at+3;
-							}
-							taglib_tag_set_title(tag,title);
-							taglib_tag_set_album(tag,title);
-							taglib_tag_set_artist(tag,artist);
-						}
-						taglib_file_save(media_file);
-					}
-					taglib_tag_free_strings();
-					taglib_file_free(media_file);
-				}
 			}
 		}
 		// slog metadata_content

@@ -8,6 +8,7 @@
 #include "pls.h"
 #include "curl.h"
 #include "log.h"
+#include <taglib/tag_c.h>
 
 void free_stream(Stream *stream)
 {
@@ -132,65 +133,107 @@ int exists(const char *fname)
 
 void newfilename(Stream* stream, const char* title)
 {
- const int size=255+1+3+1+500+1+255;
- char filename[size];
- time_t rawtime;
- struct tm * timeinfo;
- time (&rawtime);
- timeinfo = localtime(&rawtime);
- char basefilename[255];
- strftime(basefilename,254,stream->basefilename,timeinfo);
- if (title==NULL||strlen(title)==0) {
-  snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
-  while (1 == exists(filename)) {
-   stream->metadata_count++;
-   snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
-  }
- } else {
-  snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
-  while (1 == exists(filename)) {
-   stream->metadata_count++;
-   snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
-  }
- }
- if (title==NULL||strlen(title)==0) {
-   // don't search for title match if no title to match 
- } else {
-  if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
-   char str[255];
-   strncpy(str, stream->onlytitle, 255);
-   int title_found = 0;
-   char* token=strtok(str,",");
-   if (token) {
-    while (token) {
-     if(stristr(title, token)!=NULL) {
-      title_found = 1;
-     }
-     token=strtok(NULL,",");
-    }
-   } else {
-     if(stristr(title, stream->onlytitle)!=NULL) {
-      title_found = 1;
-     }
-   }
-   if (title_found == 0) {
-    snprintf(filename,size,"%s","/dev/null");
-    } else {
-    stream->metadata_count++;
-   }
-  } else {
-    stream->metadata_count++;
-  }
-}
- filename[254]='\0';
- if (stream->output_stream != NULL) fclose(stream->output_stream);
- stream->output_stream = fopen(filename, "wb");
- strncpy(stream->filename, filename, 255);
- if (title==NULL||strlen(title)==0) {
-   stream->stream_title[0]='\0';
- } else {
-   strncpy(stream->stream_title, title, 500);
- }
- plog("newfilename: %s\n", filename);
+	const int size=255+1+3+1+500+1+255;
+	char filename[size];
+	time_t rawtime;
+	struct tm * timeinfo;
+	time (&rawtime);
+	timeinfo = localtime(&rawtime);
+	char basefilename[255];
+	strftime(basefilename,254,stream->basefilename,timeinfo);
+	if (title==NULL||strlen(title)==0) {
+		snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
+		while (1 == exists(filename)) {
+			stream->metadata_count++;
+			snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
+		}
+	} else {
+		snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
+		while (1 == exists(filename)) {
+			stream->metadata_count++;
+			snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
+		}
+	}
+	if (title==NULL||strlen(title)==0) {
+	  // don't search for title match if no title to match
+	} else {
+		if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
+			char str[255];
+			strncpy(str, stream->onlytitle, 255);
+			int title_found = 0;
+			char* token=strtok(str,",");
+			if (token) {
+				while (token) {
+					if(stristr(title, token)!=NULL) {
+						title_found = 1;
+					}
+					token=strtok(NULL,",");
+				}
+			} else {
+				if(stristr(title, stream->onlytitle)!=NULL) {
+					title_found = 1;
+				}
+			}
+			if (title_found == 0) {
+				snprintf(filename,size,"%s","/dev/null");
+			} else {
+				stream->metadata_count++;
+			}
+		} else {
+			stream->metadata_count++;
+		}
+	}
+	filename[254]='\0';
+
+	char ext[3];
+	strncpy(ext, stream->ext, 3);
+	char oldfilename[255];
+	char oldtitle[500];
+	strncpy(oldfilename,stream->filename, 255);
+	strncpy(oldtitle,stream->stream_title, 500);
+
+	if (stream->output_stream != NULL) fclose(stream->output_stream);
+	stream->output_stream = fopen(filename, "wb");
+	strncpy(stream->filename, filename, 255);
+	if (title==NULL||strlen(title)==0) {
+		stream->stream_title[0]='\0';
+	} else {
+		strncpy(stream->stream_title, title, 500);
+	}
+
+	taglib_set_strings_unicode(FALSE);
+	TagLib_File *media_file;
+	if (strncmp(ext,"aac",3) == 0) {
+		media_file = taglib_file_new_type(oldfilename, TagLib_File_MP4);
+	} else {
+		media_file = taglib_file_new(oldfilename);
+	}
+	if (media_file != NULL) {
+		TagLib_Tag *tag = taglib_file_tag(media_file);
+		if (tag != NULL) {
+			taglib_tag_set_comment(tag, oldtitle);
+			char * const sep_at = strstr(oldtitle, " - ");
+			if (sep_at != NULL) {
+				*sep_at='\0';
+				char* title;
+				char* artist;
+				if (stream->TA == 0) {
+					title = oldtitle;
+					artist = sep_at+3;
+				} else {
+					artist = oldtitle;
+					title = sep_at+3;
+				}
+				taglib_tag_set_title(tag,title);
+				taglib_tag_set_album(tag,title);
+				taglib_tag_set_artist(tag,artist);
+			}
+			taglib_file_save(media_file);
+		}
+		taglib_tag_free_strings();
+		taglib_file_free(media_file);
+	}
+
+	plog("newfilename: %s\n", filename);
 }
 
