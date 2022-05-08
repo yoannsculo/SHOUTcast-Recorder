@@ -51,7 +51,7 @@ OPTIONS:
 	-d duration		defines the recording length in seconds (see CURLOPT_TIMEOUT)
 	-e extension	fileextension (default: mp3)
 	-f basefilename	defines the base name of the mp3 file(s) created (default: radio)
-	-i id3tags		split stream_title (on '-') into artist - title (default, 0) or title - artist (1)
+	-i id3tags		split stream_title (on ' - ') into artist - title (0) or title - artist (1, default)
 	-l logfolder	(rel/abs) path to folder for log (default: current folder)
 	-n name			name of station (default radio)
 	-r repeat		repeat the recording specified number of times
