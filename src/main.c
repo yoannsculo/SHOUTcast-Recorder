@@ -27,7 +27,7 @@ void usage(void)
 	printf("\t-d\t: recording duration (in seconds)\n");
 	printf("\t-e\t: fileextension (default mp3)\n");
 	printf("\t-f\t: basefilename (default radio)\n");
-	printf("\t-i\t: title - artist (0, default) or artist - title (1)\n");
+	printf("\t-i\t: title - artist (0) or artist - title (1, default)\n");
 	printf("\t-l\t: logfolder (default current folder)\n");
 	printf("\t-n\t: name of station (default radio)\n");
 	printf("\t-r\t: recording repeats (default 0 = none)\n");
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	char *proxy = NULL;
 	char *duration = "0";
 	char *repeat = "0";
-	char *ta = "0";
+	char *ta = "1";
 	
 	char* basefilename = (char*) malloc(255*sizeof(char));
 	sprintf(basefilename, "radio");

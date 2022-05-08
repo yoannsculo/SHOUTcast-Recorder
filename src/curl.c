@@ -138,7 +138,7 @@ int read_stream(Stream *stream)
   time_t start_t, end_t;
   time(&start_t);
   uint seconds_elapsed = 0;
-  uint duration=stream->duration*(1+stream->repeat);
+  uint duration=5+stream->duration*(1+stream->repeat);// add 5 seconds to enforce newfile before timeout
   do {
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, duration-seconds_elapsed);
     curl_res = curl_easy_perform(curl);
