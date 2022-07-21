@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "types.h"
 #include "parsing.h"
 #include "log.h"
@@ -138,22 +139,26 @@ int read_stream(Stream *stream)
   time_t start_t, end_t;
   time(&start_t);
   uint seconds_elapsed = 0;
-  uint duration=5+stream->duration*(1+stream->repeat);// add 5 seconds to enforce newfile before timeout
+  uint duration=1+stream->duration*(1+stream->repeat);// add 1 second to enforce newfile before timeout
   do {
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, duration-seconds_elapsed);
     curl_res = curl_easy_perform(curl);
-    if (curl_res != CURLE_OK && curl_res != CURLE_OPERATION_TIMEDOUT && curl_res != CURLE_RECV_ERROR) {
+    if (curl_res == CURLE_OK || curl_res == CURLE_OPERATION_TIMEDOUT || curl_res == CURLE_RECV_ERROR) {
+      // expected curl_res
+    } else {
+      // unexpected curl_res
       time(&now);
       info = localtime( &now );
       strftime(buffer,80,"%T", info);
       printf("%s ERROR %2d: %s\n", buffer, curl_res, curl_easy_strerror(curl_res));
       ret = -1;
-      goto err;
+//    goto err;  // not error out in such a case?
+      sleep(60); // one minute
     }
     time(&end_t);
     seconds_elapsed=(uint)difftime(end_t, start_t);
   } while(seconds_elapsed < duration);
-err:
+//err:
   curl_slist_free_all(headers);
   curl_easy_cleanup(curl);
 early_err:

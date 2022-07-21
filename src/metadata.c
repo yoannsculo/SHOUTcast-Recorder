@@ -29,109 +29,109 @@ static char ascii[256]={'_','_','_','_','_','_','_','_','_','_','_','_','_','_',
 
 int metadata_listener(Stream *stream, char *buffer)
 {
-	if (!is_metadata(stream))
-		return -1;
+    if (!is_metadata(stream))
+        return -1;
 
-	if (is_metadata_header(stream))
-		return metadata_header_handler(stream, buffer);
-	else if (is_metadata_body(stream))
-		return metadata_body_handler(stream, buffer);
+    if (is_metadata_header(stream))
+        return metadata_header_handler(stream, buffer);
+    else if (is_metadata_body(stream))
+        return metadata_body_handler(stream, buffer);
 
-	return 0;
+    return 0;
 }
 
 int metadata_header_handler(Stream *stream, char *buffer)
 {
-	MetaData *metadata = &stream->metadata;
+    MetaData *metadata = &stream->metadata;
 
-	metadata->ptr = metadata->buffer; // Rewind
-	metadata->size = abs((int)*buffer) * 16;
+    metadata->ptr = metadata->buffer; // Rewind
+    metadata->size = abs((int)*buffer) * 16;
 
-	if (metadata->size == 0) {
-		stream->bytes_count = 0;
-		stream->status = E_STATUS_MP3DATA;
-	}
-	else {
-		stream->status = E_STATUS_METADATA_BODY;
-	}
+    if (metadata->size == 0) {
+        stream->bytes_count = 0;
+        stream->status = E_STATUS_MP3DATA;
+    }
+    else {
+        stream->status = E_STATUS_METADATA_BODY;
+    }
 
-	return 0;
+    return 0;
 }
 
 void removechar( char str[], unsigned int i )
 {
-	for (unsigned int j=i; j<strlen(str)-2; j++)
-		str[j]=str[j+1];
-	str[strlen(str)-1]='\0';
+    for (unsigned int j=i; j<strlen(str)-2; j++)
+        str[j]=str[j+1];
+    str[strlen(str)-1]='\0';
 }
 
 void rtrim(char str[])
 {
-	const char *seps = "\t\n\v\f\r ";
-	int i = strlen(str) - 1;
-	while (i >= 0 && strchr(seps, str[i]) != NULL) {
-		str[i] = '\0';
-		i--;
-	}
+    const char *seps = "\t\n\v\f\r ";
+    int i = strlen(str) - 1;
+    while (i >= 0 && strchr(seps, str[i]) != NULL) {
+        str[i] = '\0';
+        i--;
+    }
 }
 
 int metadata_body_handler(Stream *stream, char *buffer)
 {
-	MetaData *metadata = &stream->metadata;
-	*metadata->ptr = *buffer;
-	if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
-		char metadata_content[500]="";
-		char stream_title[500]="";
-		strncpy(metadata_content, metadata->buffer, MIN(metadata->size,500));
-		if(0==get_metadata_field(metadata_content, "StreamTitle", stream_title))
-		{
-			stream_title[499]='\0';
-			metadata_content[499]='\0';
-			// filter problematic characters from StreamTitle
-			for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
-				if (stream_title[i]=='\0') { break;} //done
-				stream_title[i]=ascii[(int)stream_title[i]];
-			}
-			rtrim(stream_title);
-			if (0 != strncmp(stream->stream_title, stream_title, 500))
-			{
-				plog("stream_title: [%s]\n", stream_title);
-				newfilename(stream, stream_title);
-			}
-		}
-		// slog metadata_content
-		slog(metadata_content);
+    MetaData *metadata = &stream->metadata;
+    *metadata->ptr = *buffer;
+    if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
+        char metadata_content[500]="";
+        char stream_title[500]="";
+        strncpy(metadata_content, metadata->buffer, MIN(metadata->size,500));
+        if(0==get_metadata_field(metadata_content, "StreamTitle", stream_title))
+        {
+            stream_title[499]='\0';
+            metadata_content[499]='\0';
+            // filter problematic characters from StreamTitle
+            for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
+                if (stream_title[i]=='\0') { break;} //done
+                stream_title[i]=ascii[(int)stream_title[i]];
+            }
+            rtrim(stream_title);
+            if (0 != strncmp(stream->stream_title, stream_title, 500))
+            {
+                plog("stream_title: [%s]\n", stream_title);
+                newfilename(stream, stream_title);
+            }
+        }
+        // slog metadata_content
+        slog(metadata_content);
 
-		stream->bytes_count = 0;
-		stream->status = E_STATUS_MP3DATA;
-	} else {
-		metadata->ptr++;
-	}
-	return 0;
+        stream->bytes_count = 0;
+        stream->status = E_STATUS_MP3DATA;
+    } else {
+        metadata->ptr++;
+    }
+    return 0;
 }
 
 int is_metadata(Stream *stream)
 {
-	if (is_metadata_body(stream) || is_metadata_header(stream))
-		return TRUE;
-	else
-		return FALSE;
+    if (is_metadata_body(stream) || is_metadata_header(stream))
+        return TRUE;
+    else
+        return FALSE;
 }
 
 int is_metadata_body(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_BODY){
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+    if (stream->status == E_STATUS_METADATA_BODY){
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 int is_metadata_header(Stream *stream)
 {
-	if (stream->status == E_STATUS_METADATA_HEADER){
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+    if (stream->status == E_STATUS_METADATA_HEADER){
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
