@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/param.h>
+#include <ctype.h>
 
 #include "types.h"
 #include "metadata.h"
@@ -88,9 +89,20 @@ int metadata_body_handler(Stream *stream, char *buffer)
             stream_title[499]='\0';
             metadata_content[499]='\0';
             // filter problematic characters from StreamTitle
-            for (unsigned int i =0; i < MIN(metadata->size,500); i++) {
+            // and make PascalCase
+            int toUpperCase = 1; //first character toUpperCase
+            for (unsigned int i=0; i < MIN(metadata->size,500); i++) {
                 if (stream_title[i]=='\0') { break;} //done
-                stream_title[i]=ascii[(int)stream_title[i]];
+                char c=ascii[(int)stream_title[i]];
+                if (toUpperCase==1) {
+                     stream_title[i]=toupper(c);
+                     toUpperCase=0;
+                } else {
+                     stream_title[i]=tolower(c);
+                }
+                if (' '==stream_title[i]) {
+                     toUpperCase=1; //next character toUpperCase
+                }
             }
             rtrim(stream_title);
             if (0 != strncmp(stream->stream_title, stream_title, 500))
