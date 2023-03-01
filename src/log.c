@@ -11,6 +11,7 @@ static FILE *fp_log;
 static char current_time[20];
 static char current_date[20];
 static char tempfile[270];
+static FILE* fout = NULL;
 
 static int get_time(char *string)
 {
@@ -108,6 +109,9 @@ void slog(char *line)
 {
     if (log_append(fp_log, line) < 0)
         printf("Coudln't write shoutr log\n");
+    if (!fout)
+        fout = stdout;
+    log_append(fout, line);
 }
 
 void printCurrentTime() {

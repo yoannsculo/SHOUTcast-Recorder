@@ -157,15 +157,15 @@ void newfilename(Stream* stream, const char* title)
     char basefilename[255];
     strftime(basefilename,254,stream->basefilename,timeinfo);
 
-    snprintf(filename,size,"%s.%03d*", basefilename, stream->metadata_count);
+    snprintf(filename,size,"%s.%02d*", basefilename, stream->metadata_count);
     while (0 != exists_partially(filename)) {
         stream->metadata_count++;
-        snprintf(filename,size,"%s.%03d*", basefilename, stream->metadata_count);
+        snprintf(filename,size,"%s.%02d*", basefilename, stream->metadata_count);
     }
     if (title==NULL||strlen(title)==0) {
-        snprintf(filename,size,"%s.%03d.%s", basefilename, stream->metadata_count, stream->ext);
+        snprintf(filename,size,"%s.%02d.%s", basefilename, stream->metadata_count, stream->ext);
     } else {
-        snprintf(filename,size,"%s.%03d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
+        snprintf(filename,size,"%s.%02d.%s.%s", basefilename, stream->metadata_count, title, stream->ext);
     }
     if (title==NULL||strlen(title)==0) {
       // don't search for title match if no title to match
