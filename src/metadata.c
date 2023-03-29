@@ -91,8 +91,10 @@ int metadata_body_handler(Stream *stream, char *buffer)
     MetaData *metadata = &stream->metadata;
     *metadata->ptr = *buffer;
     if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
-        char metadata_content[TITLE_SIZE]="";
-        char stream_title[TITLE_SIZE]="";
+        char metadata_content[TITLE_SIZE];
+        memset(metadata_content, 0, TITLE_SIZE);
+        char stream_title[TITLE_SIZE];
+        memset(stream_title, 0, TITLE_SIZE);
         strncpy(metadata_content, metadata->buffer, MIN(metadata->size,TITLE_SIZE));
         if(0==get_metadata_field(metadata_content, "StreamTitle", stream_title))
         {
