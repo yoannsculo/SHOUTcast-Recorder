@@ -19,6 +19,10 @@
 #define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     1
 #endif
 
+#ifndef CURL_MAX_READ_SIZE
+#define CURL_MAX_READ_SIZE 10000000L
+#endif
+
 struct myprogress {
   TIMETYPE lastruntime; /* type depends on version, see above */
   CURL *curl;
@@ -121,7 +125,9 @@ int read_stream(Stream *stream)
   curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.64.0");
   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
   curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
+#ifdef CURLOPT_HTTP09_ALLOWED
   curl_easy_setopt(curl, CURLOPT_HTTP09_ALLOWED, 1L);
+#endif
 
 #if LIBCURL_VERSION_NUM >= 0x072000
   curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, xferinfo);

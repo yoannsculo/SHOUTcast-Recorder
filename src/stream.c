@@ -148,7 +148,7 @@ int exists_partially(char * fname) {
 
 void newfilename(Stream* stream, const char* title)
 {
-    const int size=255+1+3+1+500+1+255;
+    const int size=255+1+3+1+TITLE_SIZE+1+255;
     char filename[size];
     time_t rawtime;
     struct tm * timeinfo;
@@ -201,9 +201,9 @@ void newfilename(Stream* stream, const char* title)
     char ext[3];
     strncpy(ext, stream->ext, 3);
     char oldfilename[255];
-    char oldtitle[500];
+    char oldtitle[TITLE_SIZE];
     strncpy(oldfilename,stream->filename, 255);
-    strncpy(oldtitle,stream->stream_title, 500);
+    strncpy(oldtitle,stream->stream_title, TITLE_SIZE);
 
     if (stream->output_stream != NULL) fclose(stream->output_stream);
     stream->output_stream = fopen(filename, "wb");
@@ -211,7 +211,7 @@ void newfilename(Stream* stream, const char* title)
     if (title==NULL||strlen(title)==0) {
         stream->stream_title[0]='\0';
     } else {
-        strncpy(stream->stream_title, title, 500);
+        strncpy(stream->stream_title, title, TITLE_SIZE);
     }
 
     taglib_set_strings_unicode(FALSE);

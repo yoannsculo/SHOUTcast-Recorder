@@ -3,6 +3,7 @@
 
 #define TRUE  1
 #define FALSE 0
+#define TITLE_SIZE 255
 
 typedef enum {
 	E_STATUS_NONE,
@@ -56,7 +57,7 @@ typedef struct
 	unsigned int duration;  // max recording duration
 	unsigned int repeat;    // max recording repeats
 	FILE *output_stream;    // Output MP3 file
-	char stream_title[500]; // Current title
+	char stream_title[TITLE_SIZE]; // Current title
 	char station[255];      // station
 	int TA; // title = <Title> - <Artist> else <Artist> - <Title>
 	parsing_status status; 

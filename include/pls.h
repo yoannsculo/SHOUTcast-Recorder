@@ -4,8 +4,8 @@
 #define MAX_LINE_LENGTH 500
 
 typedef struct {
-	char file[500];
-	char title[500];
+	char file[MAX_LINE_LENGTH];
+	char title[MAX_LINE_LENGTH];
 	int length;
 } PlsEntry;
 

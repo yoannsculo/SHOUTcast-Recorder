@@ -66,7 +66,7 @@ void removechar( char str[], unsigned int i )
     str[strlen(str)-1]='\0';
 }
 
-void rtrim(char str[])
+void rtrim(char *str)
 {
     const char *seps = "\t\n\v\f\r ";
     int i = strlen(str) - 1;
@@ -76,22 +76,32 @@ void rtrim(char str[])
     }
 }
 
+void trim(char *str)
+{
+    const char *seps = "\t\n\v\f\r ";
+    int i = 0;
+    while (strchr(seps, str[i]) != NULL) {
+        str++;
+    }
+    rtrim(str);
+}
+
 int metadata_body_handler(Stream *stream, char *buffer)
 {
     MetaData *metadata = &stream->metadata;
     *metadata->ptr = *buffer;
     if ((unsigned)(metadata->ptr - metadata->buffer) == (metadata->size-1)) {
-        char metadata_content[500]="";
-        char stream_title[500]="";
-        strncpy(metadata_content, metadata->buffer, MIN(metadata->size,500));
+        char metadata_content[TITLE_SIZE]="";
+        char stream_title[TITLE_SIZE]="";
+        strncpy(metadata_content, metadata->buffer, MIN(metadata->size,TITLE_SIZE));
         if(0==get_metadata_field(metadata_content, "StreamTitle", stream_title))
         {
-            stream_title[499]='\0';
-            metadata_content[499]='\0';
+            stream_title[TITLE_SIZE-1]='\0';
+            metadata_content[TITLE_SIZE-1]='\0';
             // filter problematic characters from StreamTitle
             // and make PascalCase
             int toUpperCase = 1; //first character toUpperCase
-            for (unsigned int i=0; i < MIN(metadata->size,500); i++) {
+            for (unsigned int i=0; i < MIN(metadata->size,TITLE_SIZE); i++) {
                 if (stream_title[i]=='\0') { break;} //done
                 char c=ascii[(int)stream_title[i]];
                 if (toUpperCase==1) {
@@ -104,13 +114,13 @@ int metadata_body_handler(Stream *stream, char *buffer)
                      toUpperCase=1; //next character toUpperCase
                 }
             }
-            rtrim(stream_title);
+            trim(stream_title);
             if (stream_title==NULL||strlen(stream_title)==0) {
                 strncpy(stream->stream_title, stream->station, 255);
             }
-            if (0 != strncmp(stream->stream_title, stream_title, 500))
+            if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE))
             {
-                plog("stream_title: [%s]\n", stream_title);
+                plog("stream_title: [%s] [%s]\n", stream_title, stream->stream_title);
                 newfilename(stream, stream_title);
             }
         }

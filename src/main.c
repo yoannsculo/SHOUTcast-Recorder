@@ -135,10 +135,10 @@ int main(int argc, char *argv[])
     memset(stream.ext, 0, 255);
     strncpy(stream.ext, fileext, 254);
 
-    memset(stream.stream_title, 0, 500);
+    memset(stream.stream_title, 0, TITLE_SIZE);
     memset(stream.station, 0, 255);
     if (stationname != NULL) {
-        strncpy(stream.stream_title, stationname, 254);
+        strncpy(stream.stream_title, stationname, TITLE_SIZE-1);
         strncpy(stream.station, stationname, 254);
     }
 
