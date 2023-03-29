@@ -105,6 +105,9 @@ int metadata_body_handler(Stream *stream, char *buffer)
                 }
             }
             rtrim(stream_title);
+            if (stream_title==NULL||strlen(stream_title)==0) {
+                strncpy(stream->stream_title, stream->station, 255);
+            }
             if (0 != strncmp(stream->stream_title, stream_title, 500))
             {
                 plog("stream_title: [%s]\n", stream_title);

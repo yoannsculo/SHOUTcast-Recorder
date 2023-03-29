@@ -135,21 +135,23 @@ int main(int argc, char *argv[])
     memset(stream.ext, 0, 255);
     strncpy(stream.ext, fileext, 254);
 
-    memset(stream.stream_title, 0, 255);
+    memset(stream.stream_title, 0, 500);
+    memset(stream.station, 0, 255);
     if (stationname != NULL) {
         strncpy(stream.stream_title, stationname, 254);
+        strncpy(stream.station, stationname, 254);
     }
 
-        stream.duration=atoi(duration);
-        stream.repeat=atoi(repeat);
+    stream.duration=atoi(duration);
+    stream.repeat=atoi(repeat);
 
     memset(stream.proxy, 0, 255);
-        if (proxy != NULL) {
+    if (proxy != NULL) {
         strncpy(stream.proxy, proxy, 254);
     }
 
     memset(stream.onlytitle, 0, 255);
-        if (title != NULL) {
+    if (title != NULL) {
         strncpy(stream.onlytitle, title, 254);
     }
 

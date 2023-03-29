@@ -48,21 +48,22 @@ typedef struct
 typedef struct
 {
 	char url[255];          // Stream url
-	char proxy[255];		// Network proxy
+	char proxy[255];	// Network proxy
 	char basefilename[255]; // basefilename of output file
-	char filename[255]; // current filename of output file
-	char ext[255]; // current extension of output file
-	char onlytitle[255];		// record only if title contains onlytitle
+	char filename[255];     // current filename of output file
+	char ext[255];          // current extension of output file
+	char onlytitle[255];	// record only if title contains onlytitle
 	unsigned int duration;  // max recording duration
-	unsigned int repeat;  // max recording repeats
+	unsigned int repeat;    // max recording repeats
 	FILE *output_stream;    // Output MP3 file
 	char stream_title[500]; // Current title
+	char station[255];      // station
 	int TA; // title = <Title> - <Artist> else <Artist> - <Title>
 	parsing_status status; 
 
-	ICYHeader header;   // Stream header (won't change after being set)
-	MetaData metadata;  // Stream metadata (will change during session)
-	Mp3Data mp3data;    // MP3 raw data
+	ICYHeader header;        // Stream header (won't change after being set)
+	MetaData metadata;       // Stream metadata (will change during session)
+	Mp3Data mp3data;         // MP3 raw data
 
 	unsigned int bytes_count; // Number of bytes received since last metadata block
 	unsigned int bytes_count_total; // Number of bytes received since beginning
