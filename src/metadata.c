@@ -118,7 +118,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
             }
             trim(stream_title);
             if (stream_title==NULL||strlen(stream_title)==0) {
-                strncpy(stream->stream_title, stream->station, 255);
+                strncpy(stream_title, stream->station, 255);
             }
             if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE))
             {
