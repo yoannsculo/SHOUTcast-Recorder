@@ -15,38 +15,21 @@ static FILE* fout = NULL;
 
 static int get_time(char *string)
 {
-    time_t rawtime;
-    struct tm *timeinfo;
-
+    struct timeval curTime;
     if (string == NULL)
         return -1;
-
-    time (&rawtime);
-    timeinfo = localtime(&rawtime);
-
-    sprintf(string, "%d:%02d:%02d-%02d:%02d:%02d ", 1900+timeinfo->tm_year,
-                            timeinfo->tm_mon+1,
-                                timeinfo->tm_mday,
-                                timeinfo->tm_hour,
-                                timeinfo->tm_min,
-                                timeinfo->tm_sec);
-
+    gettimeofday(&curTime, NULL);
+    strftime(string, 20, "%Y%m%d-%H%M%S", localtime(&curTime.tv_sec));
     return 0;
 }
 
 static int get_date(char *string)
 {
-    time_t rawtime;
-    struct tm *timeinfo;
-
+    struct timeval curTime;
     if (string == NULL)
         return -1;
-
-    time (&rawtime);
-    timeinfo = localtime(&rawtime);
-
-    sprintf(string, "%03d.%02d%02d%02d", timeinfo->tm_yday+1, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-
+    gettimeofday(&curTime, NULL);
+    strftime(string, 20, "%a.%Y%m%d.%H%M%S", localtime(&curTime.tv_sec));
     return 0;
 }
 
