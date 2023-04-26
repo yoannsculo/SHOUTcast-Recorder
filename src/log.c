@@ -8,10 +8,11 @@
 #include "log.h"
 
 static FILE *fp_log;
-static char current_time[20];
+static char current_time[25];
 static char current_date[20];
 static char tempfile[270];
 static FILE* fout = NULL;
+static char buffr[20];
 
 static int get_time(char *string)
 {
@@ -19,7 +20,9 @@ static int get_time(char *string)
     if (string == NULL)
         return -1;
     gettimeofday(&curTime, NULL);
-    strftime(string, 20, "%Y%m%d-%H%M%S", localtime(&curTime.tv_sec));
+    int milli = curTime.tv_usec / 1000;
+    strftime(buffr, 20, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
+    snprintf(string, 25, "%s.%03d ", buffr, milli);
     return 0;
 }
 
@@ -98,12 +101,9 @@ void slog(char *line)
 }
 
 void printCurrentTime() {
-    struct timeval curTime;
-    gettimeofday(&curTime, NULL);
-    int milli = curTime.tv_usec / 1000;
-    char buffr [80];
-    strftime(buffr, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
-    printf("%s.%03d ", buffr, milli);
+    if (get_time(current_time) < 0)
+        return;
+    printf("%s", current_time);
 }
 
 void plog(char *fmt, ...) {
