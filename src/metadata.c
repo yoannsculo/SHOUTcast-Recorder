@@ -112,7 +112,7 @@ int metadata_body_handler(Stream *stream, char *buffer)
                 } else {
                      stream_title[i]=tolower(c);
                 }
-                if ((' '==stream_title[i])||('.'==stream_title[i])){
+                if ((' '==stream_title[i])||('.'==stream_title[i])||('('==stream_title[i])){
                      toUpperCase=1; //next character toUpperCase
                 }
             }

@@ -53,7 +53,7 @@ int log_open_files(char* folder)
     snprintf(tempfile,270,"%s/shoutr.%s.log",folder,current_date);
     fp_log = fopen(tempfile,"a");
     if (fp_log == NULL) {
-        printf("Couldn't open shoutr.log file\n");
+        printf("Couldn't open %s file\n", tempfile);
         return -1;
     }
 
@@ -103,7 +103,7 @@ void slog(char *line)
 void printCurrentTime() {
     if (get_time(current_time) < 0)
         return;
-    printf("%s", current_time);
+    fwrite(current_time, sizeof(char), sizeof(current_time)-1, stdout);
 }
 
 void plog(char *fmt, ...) {
