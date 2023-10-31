@@ -48,15 +48,16 @@ Examples :
 
 OPTIONS:
 
-	-d duration		defines the recording length in seconds (see CURLOPT_TIMEOUT)
-	-e extension	fileextension (default: mp3)
-	-f basefilename	defines the base name of the mp3 file(s) created (default: radio)
-	-i id3tags		split stream_title (on ' - ') into artist - title (0) or title - artist (1, default)
-	-l logfolder	(rel/abs) path to folder for log (default: current folder)
-	-n name			name of station (default radio)
-	-r repeat		repeat the recording specified number of times
-	-t title		(part of) title to record (default any) (tip: use '-' to record only music)
-	-x proxy		defines proxy to use (see CURLOPT_PROXY)
+	-d duration     defines the recording length in seconds (see CURLOPT_TIMEOUT)
+	-e extension    fileextension (default: mp3)
+	-f basefilename defines the base name of the mp3 file(s) created (default: radio)
+	-i ignore       stream_title (change) to ignore (do not create a new file)
+	-l logfolder    (rel/abs) path to folder for log (default: current folder)
+	-n name         name of station (default radio)
+	-r repeat       repeat the recording specified number of times
+	-s id3tags      split stream_title (on ' - ') into artist - title (0) or title - artist (1, default)
+	-t title        (part of) title to record (default any) (tip: use '-' to record only music)
+	-x proxy        defines proxy to use (see CURLOPT_PROXY)
 
 without these additional commandline options specified
 

@@ -27,10 +27,10 @@ void usage(void)
     printf("\t-d\t: recording duration (in seconds)\n");
     printf("\t-e\t: fileextension (default mp3)\n");
     printf("\t-f\t: basefilename (default radio)\n");
-    printf("\t-i\t: title - artist (0) or artist - title (1, default)\n");
     printf("\t-l\t: logfolder (default current folder)\n");
     printf("\t-n\t: name of station (default radio)\n");
     printf("\t-r\t: recording repeats (default 0 = none)\n");
+    printf("\t-s\t: split title - artist (0) or artist - title (1, default)\n");
     printf("\t-t\t: title to record (default any)\n");
     printf("\t-x\t: proxy (default no proxy)\n");
 }
@@ -46,25 +46,24 @@ int main(int argc, char *argv[])
     int uflag = 0;
     int c;
     char *cvalue = NULL;
-    char *proxy = NULL;
-    char *duration = "0";
-    char *repeat = "0";
-    char *ta = "1";
+    char *log = malloc(TITLE_SIZE*sizeof(char));
+    memset(log, 0, TITLE_SIZE);
+    strncpy(log, ".", TITLE_SIZE-1);
+    Stream stream;
+    memset(stream.to_ignore, 0, TITLE_SIZE);
+    memset(stream.ext, 0, TITLE_SIZE);
+    strncpy(stream.ext, "mp3", TITLE_SIZE-1);
+    memset(stream.proxy, 0, TITLE_SIZE);
+    stream.duration=0;
+    stream.repeat=0;
+    stream.TA = 1;
+    memset(stream.basefilename, 0, TITLE_SIZE);
+    strncpy(stream.basefilename,"radio",TITLE_SIZE-1);
+    memset(stream.stream_title, 0, TITLE_SIZE);
+    memset(stream.station, 0, TITLE_SIZE);
+    memset(stream.onlytitle, 0, TITLE_SIZE);
 
-    char* basefilename = (char*) malloc(255*sizeof(char));
-    sprintf(basefilename, "radio");
-
-    char* stationname = NULL;
-
-    char* fileext = (char*) malloc(255*sizeof(char));
-    sprintf(fileext, "mp3");
-
-    char* log = (char*) malloc(255*sizeof(char));
-    sprintf(log, ".");
-
-    char* title = NULL;
-
-    while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:n:t:")) != -1) {
+    while ((c = getopt(argc, argv, "p:u:h:x:f:e:d:r:i:l:n:t:s:")) != -1) {
         switch(c) {
             // playlist
             case 'p':
@@ -78,34 +77,38 @@ int main(int argc, char *argv[])
                 break;
             // proxy
             case 'x':
-                proxy = optarg;
+                strncpy(stream.proxy, optarg, TITLE_SIZE-1);
                 break;
             // fileextension
             case 'e':
-                fileext = optarg;
+                strncpy(stream.ext, optarg, TITLE_SIZE-1);
                 break;
             // basefilename
             case 'f':
-                basefilename = optarg;
+                strncpy(stream.basefilename, optarg, TITLE_SIZE-1);
                 break;
             // duration
             case 'd':
-                duration = optarg;
+                stream.duration = atoi(optarg);
                 break;
             case 'r':
-                repeat = optarg;
+                stream.repeat=atoi(optarg);
                 break;
-            case 'i':
-                ta = optarg;
+            case 's':
+                stream.TA = atoi(optarg);
                 break;
             case 'l':
-                log = optarg;
+                strncpy(log, optarg, TITLE_SIZE-1);
                 break;
             case 'n':
-                stationname = optarg;
+                strncpy(stream.stream_title, optarg, TITLE_SIZE-1);
+                strncpy(stream.station, optarg, TITLE_SIZE-1);
                 break;
             case 't':
-                title = optarg;
+                strncpy(stream.onlytitle, optarg, TITLE_SIZE-1);
+                break;
+            case 'i':
+                strncpy(stream.to_ignore, optarg, TITLE_SIZE-1);
                 break;
             case 'h':
             default:
@@ -114,47 +117,14 @@ int main(int argc, char *argv[])
                 break;
         }
     }
-
-
     if (pflag && uflag) {
         usage();
         goto err_early;
     }
-
     if ((ret = log_open_files(log)) < 0) {
         printf("Couldn't open log files.\n");
         goto err_early;
     }
-
-    Stream stream;
-    stream.TA=atoi(ta);
-
-    memset(stream.basefilename, 0, 255);
-    strncpy(stream.basefilename,basefilename,254);
-
-    memset(stream.ext, 0, 255);
-    strncpy(stream.ext, fileext, 254);
-
-    memset(stream.stream_title, 0, TITLE_SIZE);
-    memset(stream.station, 0, 255);
-    if (stationname != NULL) {
-        strncpy(stream.stream_title, stationname, TITLE_SIZE-1);
-        strncpy(stream.station, stationname, 254);
-    }
-
-    stream.duration=atoi(duration);
-    stream.repeat=atoi(repeat);
-
-    memset(stream.proxy, 0, 255);
-    if (proxy != NULL) {
-        strncpy(stream.proxy, proxy, 254);
-    }
-
-    memset(stream.onlytitle, 0, 255);
-    if (title != NULL) {
-        strncpy(stream.onlytitle, title, 254);
-    }
-
     if (pflag) {
         if ((ret = load_stream_from_playlist(&stream, cvalue)) < 0) {
             printf("Couldn't load stream from playlist\n");
@@ -164,7 +134,6 @@ int main(int argc, char *argv[])
 
     if (uflag) {
         load_stream(&stream, cvalue);
-
     }
 
     if ((ret = read_stream(&stream)) < 0) {
@@ -174,6 +143,7 @@ int main(int argc, char *argv[])
 err:
     log_close_files();
 err_early:
+    free(log);
     return ret;
 }
 

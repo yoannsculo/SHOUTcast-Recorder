@@ -52,7 +52,7 @@ int load_stream(Stream *stream, const char *url)
 
     stream->status = E_STATUS_HEADER;
 
-    strncpy(stream->url, url, 255);
+    strncpy(stream->url, url, TITLE_SIZE);
     newfilename(stream, stream->stream_title);
     return 0;
 }
@@ -148,14 +148,14 @@ int exists_partially(char * fname) {
 
 void newfilename(Stream* stream, const char* title)
 {
-    const int size=255+1+3+1+TITLE_SIZE+1+255;
+    const int size=TITLE_SIZE+1+3+1+TITLE_SIZE+1+TITLE_SIZE;
     char filename[size];
     time_t rawtime;
     struct tm * timeinfo;
     time (&rawtime);
     timeinfo = localtime(&rawtime);
-    char basefilename[255];
-    strftime(basefilename,254,stream->basefilename,timeinfo);
+    char basefilename[TITLE_SIZE];
+    strftime(basefilename,TITLE_SIZE-1,stream->basefilename,timeinfo);
 
     snprintf(filename,size,"%s.%02d*", basefilename, stream->metadata_count);
     while (0 != exists_partially(filename)) {
@@ -171,8 +171,8 @@ void newfilename(Stream* stream, const char* title)
       // don't search for title match if no title to match
     } else {
         if (stream->onlytitle!=NULL&&strlen(stream->onlytitle)!=0) {
-            char str[255];
-            strncpy(str, stream->onlytitle, 255);
+            char str[TITLE_SIZE];
+            strncpy(str, stream->onlytitle, TITLE_SIZE);
             int title_found = 0;
             char* token=strtok(str,",");
             if (token) {
@@ -196,18 +196,18 @@ void newfilename(Stream* stream, const char* title)
             stream->metadata_count++;
         }
     }
-    filename[254]='\0';
+    filename[TITLE_SIZE-1]='\0';
 
     char ext[3];
     strncpy(ext, stream->ext, 3);
-    char oldfilename[255];
+    char oldfilename[TITLE_SIZE];
     char oldtitle[TITLE_SIZE];
-    strncpy(oldfilename,stream->filename, 255);
+    strncpy(oldfilename,stream->filename, TITLE_SIZE);
     strncpy(oldtitle,stream->stream_title, TITLE_SIZE);
 
     if (stream->output_stream != NULL) fclose(stream->output_stream);
     stream->output_stream = fopen(filename, "wb");
-    strncpy(stream->filename, filename, 255);
+    strncpy(stream->filename, filename, TITLE_SIZE);
     if (title==NULL||strlen(title)==0) {
         stream->stream_title[0]='\0';
     } else {

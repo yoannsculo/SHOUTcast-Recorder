@@ -118,9 +118,10 @@ int metadata_body_handler(Stream *stream, char *buffer)
             }
             trim(stream_title);
             if (stream_title==NULL||strlen(stream_title)==0) {
-                strncpy(stream_title, stream->station, 255);
+                strncpy(stream_title, stream->station, TITLE_SIZE);
             }
-            if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE))
+            if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE)
+                && NULL == strstr(stream_title, stream->to_ignore))
             {
                 plog("stream_title: [%s] [%s]\n", stream_title, stream->stream_title);
                 newfilename(stream, stream_title);
