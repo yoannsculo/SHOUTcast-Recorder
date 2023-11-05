@@ -69,46 +69,58 @@ int main(int argc, char *argv[])
             case 'p':
                 pflag = 1;
                 cvalue = optarg;
+                printf("playlist: %s\n", optarg);
                 break;
             // stream url
             case 'u':
                 uflag = 1;
                 cvalue = optarg;
+                printf("url: %s\n", optarg);
                 break;
             // proxy
             case 'x':
                 strncpy(stream.proxy, optarg, TITLE_SIZE-1);
+                printf("proxy: %s\n", optarg);
                 break;
             // fileextension
             case 'e':
                 strncpy(stream.ext, optarg, TITLE_SIZE-1);
+                printf("ext: %s\n", optarg);
                 break;
             // basefilename
             case 'f':
                 strncpy(stream.basefilename, optarg, TITLE_SIZE-1);
+                printf("basefilename: %s\n", optarg);
                 break;
             // duration
             case 'd':
                 stream.duration = atoi(optarg);
+                printf("duration: %s\n", optarg);
                 break;
             case 'r':
                 stream.repeat=atoi(optarg);
+                printf("repeat: %s\n", optarg);
                 break;
             case 's':
                 stream.TA = atoi(optarg);
+                printf("TA: %si\n", optarg);
                 break;
             case 'l':
                 strncpy(log, optarg, TITLE_SIZE-1);
+                printf("log: %s\n", optarg);
                 break;
             case 'n':
                 strncpy(stream.stream_title, optarg, TITLE_SIZE-1);
                 strncpy(stream.station, optarg, TITLE_SIZE-1);
+                printf("station: %s\n", optarg);
                 break;
             case 't':
                 strncpy(stream.onlytitle, optarg, TITLE_SIZE-1);
+                printf("onlytitle: %s\n", optarg);
                 break;
             case 'i':
                 strncpy(stream.to_ignore, optarg, TITLE_SIZE-1);
+                printf("to_ignore: %s\n", optarg);
                 break;
             case 'h':
             default:

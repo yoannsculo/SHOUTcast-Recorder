@@ -120,11 +120,15 @@ int metadata_body_handler(Stream *stream, char *buffer)
             if (stream_title==NULL||strlen(stream_title)==0) {
                 strncpy(stream_title, stream->station, TITLE_SIZE);
             }
-            if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE)
-                && NULL == strstr(stream_title, stream->to_ignore))
+            if (0 != strncmp(stream->stream_title, stream_title, TITLE_SIZE))
             {
-                plog("stream_title: [%s] [%s]\n", stream_title, stream->stream_title);
-                newfilename(stream, stream_title);
+                plog("stream_title: [%s] [%s] (%s)\n", stream_title, stream->stream_title,stream->to_ignore);
+                if (  (NULL!=stream->to_ignore)&&(strlen(stream->to_ignore)!=0)
+                    &&(NULL!=strstr(stream_title, stream->to_ignore))){
+                   plog("no newfilename, ignore [%s] found in [%s]\n", stream->to_ignore, stream_title);
+                } else {
+                   newfilename(stream, stream_title);
+                }
             }
         }
         // slog metadata_content
