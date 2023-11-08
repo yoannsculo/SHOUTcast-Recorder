@@ -3,6 +3,7 @@
 
 #define TRUE  1
 #define FALSE 0
+#define TITLE_SIZE 160 
 
 typedef enum {
 	E_STATUS_NONE,
@@ -18,7 +19,7 @@ typedef struct
 	char icy_name[500];
 	char icy_notice1[500];
 	char icy_notice2[500];
-	char icy_genre[255];
+	char icy_genre[TITLE_SIZE];
 	char icy_pub[10];
 	char icy_br[10]; // bitrate
 
@@ -47,20 +48,31 @@ typedef struct
 
 typedef struct
 {
-	char url[255];          // Stream url
+	char url[TITLE_SIZE];          // Stream url
+	char proxy[TITLE_SIZE];	// Network proxy
+	char basefilename[TITLE_SIZE]; // basefilename of output file
+	char filename[TITLE_SIZE];     // current filename of output file
+	char ext[TITLE_SIZE];           // current extension of output file
+	char onlytitle[TITLE_SIZE];	// record only if title contains onlytitle
+	char to_ignore[TITLE_SIZE];	// ignore stream_title changes when including this string
+	unsigned int duration;  // max recording duration
+	unsigned int repeat;    // max recording repeats
 	FILE *output_stream;    // Output MP3 file
-	char stream_title[500]; // Current title
-
+	char stream_title[TITLE_SIZE]; // Current title
+	char station[TITLE_SIZE];      // station
+	int TA; // title = <Title> - <Artist> else <Artist> - <Title>
 	parsing_status status; 
 
-	ICYHeader header;   // Stream header (won't change after being set)
-	MetaData metadata;  // Stream metadata (will change during session)
-	Mp3Data mp3data;    // MP3 raw data
+	ICYHeader header;        // Stream header (won't change after being set)
+	MetaData metadata;       // Stream metadata (will change during session)
+	Mp3Data mp3data;         // MP3 raw data
 
 	unsigned int bytes_count; // Number of bytes received since last metadata block
 	unsigned int bytes_count_total; // Number of bytes received since beginning
 	unsigned int blocks_count; // Number of HTTP blocks received
 	unsigned int metadata_count; // Number of metadata blocks received since beginning
 } Stream;
+
+void newfilename(Stream* stream,const char* title);
 
 #endif // __TYPES_H_

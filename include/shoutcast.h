@@ -3,8 +3,9 @@
 
 #include "types.h"
 
+int free_stream(Stream *stream);
 int load_stream(Stream *stream, const char *url);
 void global_listener(Stream *stream, char *buffer);
-int write_data(Stream *stream, size_t *size);
+int write_data(Stream *stream);
 
 #endif // __SHOUTCAST_H_

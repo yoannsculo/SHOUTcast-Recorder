@@ -7,8 +7,8 @@ OBJ        = $(SRC:src/%.c=$(BUILD_PATH)/%.o)
 INCLUDES   = -Iinclude \
 			 -I/usr/include
 
-CFLAGS	   = -W -Wall -g
-LDFLAGS	   = -L/usr/lib -lcurl
+CFLAGS	   = -W -Wall -g -D_GNU_SOURCE
+LDFLAGS	   = -L/usr/lib -lcurl -ltag_c
 
 all: prepare $(EXEC)
 

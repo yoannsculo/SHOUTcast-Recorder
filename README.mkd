@@ -1,15 +1,18 @@
 SHOUTcast Recorder
 ==================
 
-SHOUTcast Recorder is able to record and store SHOUTcast stream automatically
-into separate mp3 files. This software was initially conceived to understand
-the SHOUTcast protocol, not really to record web radios ;) The fun part is to
-play with the protocol !
+SHOUTcast Recorder is able to record and store SHOUTcast stream automatically into separate mp3 files. This software was initially conceived to understand the SHOUTcast protocol, not really to record web radios ;) The fun part is to play with the protocol !
 
 Dependencies
 ------------
 
 - libcurl
+	- sudo apt-get install libcurl-dev
+	- sudo apt-get install libcurl4-openssl-dev
+- taglib
+	- sudo apt-get install libtag1-dev
+	- sudo apt-get install libtagc0-dev
+ 
 
 How does it work ?
 ------------------
@@ -23,27 +26,113 @@ How does it work ?
 - At the end of each block, we write gathered MP3 data into an external file
 - Now we can enjoy downloaded music :)
 
+How to build it
+---------------
+
+- use make to build
+- artefact is in build folder
+- see Makefile
+
 How to run it
 -------------
 
-Here are two examples :
+Usage:
 
-	./shoutr -u http://88.190.24.47:80
+	./shoutr [-p <playlist>|-u <stream_url>] [OPTIONS]
 
-or
+Examples :
 
-	./shoutr -p frequence3.pls
+	./shoutr -u http://88.190.24.47:80 -f ./%w-%H -d 3580
 
+	./shoutr -p frequence3.pls -l ./log
+
+OPTIONS:
+
+	-d duration     defines the recording length in seconds (see CURLOPT_TIMEOUT)
+	-e extension    fileextension (default: mp3)
+	-f basefilename defines the base name of the mp3 file(s) created (default: radio)
+	-i ignore       stream_title (change) to ignore (do not create a new file)
+	-l logfolder    (rel/abs) path to folder for log (default: current folder)
+	-n name         name of station (default radio)
+	-r repeat       repeat the recording specified number of times
+	-s id3tags      split stream_title (on ' - ') into artist - title (0) or title - artist (1, default)
+	-t title        (part of) title to record (default any) (tip: use '-' to record only music)
+	-x proxy        defines proxy to use (see CURLOPT_PROXY)
+
+without these additional commandline options specified
+
+	no proxy is used 
+		libcurl respects the proxy environment variables named http_proxy, ftp_proxy, sftp_proxy etc., see CURLOPT_PROXY
+	basename will be radio###.mp3 
+		### is incrementing number
+		incrementing number can be used for sorting. 
+			as metadata is never changing exacty on the moment the song changes,
+			a fluent playback is only possible in recording order (hence incrementing number)
+		incrementing number will increment when
+			metadata streamtitle changes
+			repeat > 0 and duration passes
+		basename can handle timestamp directives (see strftime)
+		basename will be appended with name of station (if provided with -n) and downloaded music using metadata (if available)
+	duration will be infinite (see CURLOPT_TIMEOUT)
+	repeat will be 0 (no repeat)
+	repeat will 
+		reuse/continue the recording using the existing connection
+		avoid establishing new connection (preventing new connection pub)
+		change incrementing number
+		create a separate recording file for each repeat
+		not change basename (weekday nor hour nor any supplied timestamp directive)
+		N.B. a repeat set to 2 will produce 3 recordings (0, 1=1st repeat, 2=2nd repeat)
+			(of the same stream and of the same duration)
+	non-empty stream_title will be used for id3tag assuming artist - title
+
+
+cron example :
+
+	SHELL=/bin/bash
+	log=/HDD/log/crontab.
+	dt=date +%Y%m%d
+	
+	stream=http://88.190.24.47:80
+	0 10 * * * cd /HDD; ./shoutr -u $stream -f ./\%u-10 -d 3580 -r 1 >> $log$($dt).log 2>&1
+
+
+copy recordings in recording order :
+
+	
+	#!/bin/bash
+	SECONDS=0
+	TEST=
+	IFS=$'\n'
+	DRIVE="$(dirname "$0")"
+	DST="${DRIVE}/.."
+	LOG="${DRIVE}/copyit.LOG"
+	echo "" > $LOG
+	
+	function cpit {
+	$TEST mkdir -pv "${DST}/${CWD}" | tee -a $LOG
+	for i in $( find "${SRC}${CWD}" -type f -mtime -6 | sort )
+	do 
+	 $TEST rsync --min-size=1mb -avh --no-p --no-g --chmod=ugo=rwX --modify-window=2 "$i" "${DST}/${CWD}" | tee -a $LOG
+	done
+	}
+	
+	SRC=/mnt/nfs/HDD/
+	for G in "CD01" "CD02" "CD04" 
+	do
+	 CWD=$G
+	 echo $CWD $DST
+	 cpit
+	done
+	echo "Script finished in $SECONDS seconds=> $(($SECONDS/60)) min $(($SECONDS%60)) sec" | tee -a $LOG
+	
 TODO
 ----
 
 Some interesting features to add :
 
-- add option --quiet
-- add option --ncurses
-- add a big shoucast radio list with lots of radios 
-- add shoutr_start and shoutr_stop functions.
-- add id3tags
+- more id3tags (taglib) (artist and title depends on station)
+- see www.radio-browser.info for a big shoucast radio list 
+
 
 LICENSE
 -------
@@ -53,5 +142,7 @@ See the file COPYING for details.
 
 Contact
 -------
-
 Yoann Sculo - <yoann.sculo@gmail.com>
+
+------
+markdown by http://remarkableapp.github.io/
